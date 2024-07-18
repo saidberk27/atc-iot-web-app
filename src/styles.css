@@ -1,6 +1,5 @@
 @import "primeicons/primeicons.css";
 @import "primeflex/primeflex.css";
-@import '@aws-amplify/ui-angular/theme.css';
 
 body {
   margin: 0;
