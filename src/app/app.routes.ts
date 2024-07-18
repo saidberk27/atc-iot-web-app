@@ -12,6 +12,6 @@ export const routes: Routes = [
     { path: 'ana-sayfa', component: HomeScreenComponent, canActivate: [authGuard] },
     { path: 'hakkimizda', component: AboutScreenComponent },
     { path: 'giris-yap', component: LoginScreenComponent },
-    { path: 'sifre-degistir', component: ChangePasswordComponent },
+    { path: 'sifre-degistir', component: ChangePasswordComponent, canActivate: [authGuard] },
     { path: '**', redirectTo: '' }
 ];

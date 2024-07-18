@@ -10,6 +10,7 @@ import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageModule } from 'primeng/message';
 
+
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
@@ -29,10 +30,15 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
+  strongPasswordRegex = '^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^?&*])(?=.{8,})';
 
   constructor(private fb: FormBuilder, private router: Router, private authStateService: AuthStateService) {
     this.changePasswordForm = this.fb.group({
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(new RegExp(this.strongPasswordRegex))
+      ]],
       confirmPassword: ['', Validators.required]
     }, { validator: this.passwordMatchValidator });
   }
@@ -65,9 +71,15 @@ export class ChangePasswordComponent implements OnInit {
           this.errorMessage = 'Beklenmeyen bir durum oluştu. Lütfen tekrar deneyin.';
         }
         this.authStateService.clearSignInData();
-      } catch (error) {
+      } catch (error: any) {
         console.error('Şifre değiştirme hatası', error);
-        this.errorMessage = 'Şifre değiştirme sırasında bir hata oluştu. Lütfen tekrar deneyin.';
+        if (error.name === 'InvalidPasswordException') {
+          this.errorMessage = 'Geçersiz şifre: Şifreniz politikamıza uygun değil. Lütfen daha güçlü bir şifre seçin.';
+        } else if (error.name === 'LimitExceededException') {
+          this.errorMessage = 'Çok fazla deneme yaptınız. Lütfen bir süre bekleyip tekrar deneyin.';
+        } else {
+          this.errorMessage = 'Şifre değiştirme sırasında bir hata oluştu. Lütfen tekrar deneyin.';
+        }
       }
     }
   }
