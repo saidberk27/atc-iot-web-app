@@ -30,13 +30,13 @@ export class LoginScreenComponent implements OnInit {
     email: ['', [Validators.required, Validators.email, this.emailValidator]],
     password: ['', [Validators.required, Validators.minLength(8), this.passwordValidator]],
     rememberMe: [false],
-    mfaCode: [''] // MFA kodu için yeni form kontrolü
+    mfaCode: ['']
   });
 
   errorMessage: string = '';
   successMessage: string = '';
   showMfaInput: boolean = false;
-  private signInData: any; // MFA için sign in verilerini saklamak için
+  private signInData: any;
 
   constructor(private fb: FormBuilder, private router: Router, private authStateService: AuthStateService) { }
 
@@ -45,7 +45,7 @@ export class LoginScreenComponent implements OnInit {
       const user = await getCurrentUser();
       console.log('Kullanıcı giriş yapmış:', user);
       this.successMessage = 'Hoş geldiniz!';
-
+      this.authStateService.setSignInData(user);
       setTimeout(() => {
         this.router.navigate(['/ana-sayfa']);
       }, 1000);
@@ -86,23 +86,24 @@ export class LoginScreenComponent implements OnInit {
           });
 
           if (isSignedIn) {
+            const user = await getCurrentUser();
+            this.authStateService.setSignInData(user);
             this.successMessage = 'Giriş başarılı!';
             console.log('Giriş başarılı');
-            this.router.navigate(['/ana-sayfa']); // Ana sayfaya yönlendirme
+            this.router.navigate(['/ana-sayfa']);
           } else {
-            console.log('Ek adımlar gerekli', nextStep);
+            console.log('Ek adımlar gerekli');
             if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
               this.authStateService.setSignInData(nextStep);
               this.router.navigate(['/sifre-degistir']);
-            }
-            if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_SMS_CODE') {
+            } else if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_SMS_CODE' ||
+              nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_TOTP_CODE') {
               this.showMfaInput = true;
               this.signInData = nextStep;
-              this.errorMessage = 'Lütfen telefonunuza gönderilen MFA kodunu girin.';
-            } else if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_TOTP_CODE') {
-              this.showMfaInput = true;
-              this.signInData = nextStep;
-              this.errorMessage = 'Lütfen TOTP uygulamanızdan aldığınız MFA kodunu girin.';
+              this.authStateService.setSignInData(nextStep);
+              this.errorMessage = nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_SMS_CODE'
+                ? 'Lütfen telefonunuza gönderilen MFA kodunu girin.'
+                : 'Lütfen TOTP uygulamanızdan aldığınız MFA kodunu girin.';
             } else {
               this.errorMessage = 'Beklenmeyen ek doğrulama adımı gerekli: ' + nextStep.signInStep;
             }
@@ -137,8 +138,10 @@ export class LoginScreenComponent implements OnInit {
       try {
         const { isSignedIn } = await confirmSignIn({ challengeResponse: mfaCode });
         if (isSignedIn) {
+          const user = await getCurrentUser();
+          this.authStateService.setSignInData(user);
           this.successMessage = 'MFA doğrulaması başarılı! Giriş yapılıyor...';
-          this.router.navigate(['/ana-sayfa']); // Ana sayfaya yönlendirme
+          this.router.navigate(['/ana-sayfa']);
         } else {
           this.errorMessage = 'MFA doğrulaması başarısız oldu. Lütfen tekrar deneyin.';
         }
@@ -150,6 +153,7 @@ export class LoginScreenComponent implements OnInit {
       this.errorMessage = 'Lütfen MFA kodunu girin.';
     }
   }
+
   async forgotPassword() {
     const email = this.loginForm.get('email')?.value;
     if (email) {

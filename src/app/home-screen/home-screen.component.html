@@ -1,1 +1,10 @@
-<p>home-screen works!</p>
+<div>
+    <h1>Welcome to the Home Screen</h1>
+    <ng-container *ngIf="userEmail; else noUser">
+        <p>Logged in as: {{ userEmail }}</p>
+    </ng-container>
+    <ng-template #noUser>
+        <p>No user logged in</p>
+    </ng-template>
+    <p>home-screen works!</p>
+</div>

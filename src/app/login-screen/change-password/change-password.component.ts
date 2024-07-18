@@ -6,10 +6,7 @@ import { AuthStateService } from '../../services/auth-state.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
-import { CheckboxModule } from 'primeng/checkbox';
 import { MessageModule } from 'primeng/message';
-
 
 @Component({
   selector: 'app-change-password',
@@ -20,8 +17,6 @@ import { MessageModule } from 'primeng/message';
     ReactiveFormsModule,
     ButtonModule,
     InputTextModule,
-    PasswordModule,
-    CheckboxModule,
     MessageModule
   ],
   styleUrls: ['./change-password.component.css']
@@ -30,14 +25,13 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
-  strongPasswordRegex = '^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^?&*])(?=.{8,})';
 
   constructor(private fb: FormBuilder, private router: Router, private authStateService: AuthStateService) {
     this.changePasswordForm = this.fb.group({
       newPassword: ['', [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(new RegExp(this.strongPasswordRegex))
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
       ]],
       confirmPassword: ['', Validators.required]
     }, { validator: this.passwordMatchValidator });
