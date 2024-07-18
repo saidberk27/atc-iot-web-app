@@ -88,7 +88,7 @@ export class LoginScreenComponent implements OnInit {
           if (isSignedIn) {
             this.successMessage = 'Giriş başarılı!';
             console.log('Giriş başarılı');
-            this.router.navigate(['/home_screen']); // Ana sayfaya yönlendirme
+            this.router.navigate(['/ana-sayfa']); // Ana sayfaya yönlendirme
           } else {
             console.log('Ek adımlar gerekli', nextStep);
             if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
@@ -138,7 +138,7 @@ export class LoginScreenComponent implements OnInit {
         const { isSignedIn } = await confirmSignIn({ challengeResponse: mfaCode });
         if (isSignedIn) {
           this.successMessage = 'MFA doğrulaması başarılı! Giriş yapılıyor...';
-          this.router.navigate(['/home_screen']); // Ana sayfaya yönlendirme
+          this.router.navigate(['/ana-sayfa']); // Ana sayfaya yönlendirme
         } else {
           this.errorMessage = 'MFA doğrulaması başarısız oldu. Lütfen tekrar deneyin.';
         }
