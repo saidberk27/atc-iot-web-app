@@ -8,15 +8,19 @@ export class AuthStateService {
 
   constructor() { }
 
-  setSignInData(data: any) {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-      console.error('Error saving auth data to localStorage:', error);
-    }
+  async setSignInData(data: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        resolve();
+      } catch (error) {
+        console.error('Error saving auth data to localStorage:', error);
+        reject(error);
+      }
+    });
   }
 
-  getSignInData() {
+  getSignInData(): any {
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
       return data ? JSON.parse(data) : null;
@@ -26,7 +30,7 @@ export class AuthStateService {
     }
   }
 
-  clearSignInData() {
+  clearSignInData(): void {
     try {
       localStorage.removeItem(this.STORAGE_KEY);
     } catch (error) {

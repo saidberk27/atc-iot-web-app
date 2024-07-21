@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
-
+import { getCurrentUser } from 'aws-amplify/auth'
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
@@ -55,16 +55,33 @@ export class ChangePasswordComponent implements OnInit {
           }
         });
 
-        if (isSignedIn) {
-          this.successMessage = 'Şifreniz başarıyla değiştirildi. Yönlendiriliyorsunuz...';
-          setTimeout(() => this.router.navigate(['/ana-sayfa']), 2000);
-        } else if (nextStep.signInStep === 'DONE') {
-          this.successMessage = 'Şifreniz başarıyla değiştirildi. Yönlendiriliyorsunuz...';
-          setTimeout(() => this.router.navigate(['/ana-sayfa']), 2000);
+        if (isSignedIn || nextStep.signInStep === 'DONE') {
+          try {
+            const user = await getCurrentUser();
+
+            const userData = {
+              username: user.username,
+              userId: user.userId,
+              signInDetails: {
+                loginId: user.signInDetails?.loginId
+              }
+            };
+
+            await this.authStateService.setSignInData(userData);
+            console.log('Şifre değiştirildi ve oturum kaydedildi');
+            this.successMessage = 'Şifreniz başarıyla değiştirildi. Yönlendiriliyorsunuz...';
+
+            // Oturum kaydedildikten sonra yönlendirme yap
+            setTimeout(() => this.router.navigate(['/ana-sayfa']), 2000);
+          } catch (error) {
+            console.error('Oturum kaydetme hatası', error);
+            this.errorMessage = 'Oturum kaydedilirken bir hata oluştu. Lütfen tekrar giriş yapın.';
+          }
         } else {
           this.errorMessage = 'Beklenmeyen bir durum oluştu. Lütfen tekrar deneyin.';
         }
-        this.authStateService.clearSignInData();
+
+
       } catch (error: any) {
         console.error('Şifre değiştirme hatası', error);
         if (error.name === 'InvalidPasswordException') {

@@ -14,13 +14,15 @@ export class HomeScreenComponent implements OnInit {
 
   constructor(private authStateService: AuthStateService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     const signInData = this.authStateService.getSignInData();
     console.log('SignInData:', signInData);
     if (signInData && signInData.username) {
-      this.userEmail = signInData.signInDetails.loginId;
+      this.userEmail = signInData.signInDetails?.loginId || signInData.username;
     } else {
       console.log('No valid sign-in data found');
+      // Kullanıcıyı giriş sayfasına yönlendirebilirsiniz
+      // this.router.navigate(['/login']);
     }
   }
 }
