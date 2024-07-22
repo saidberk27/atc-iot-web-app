@@ -51,6 +51,9 @@ export class LoginScreenComponent implements OnInit {
       }, 1000);
     } catch (error) {
       console.log('Kullanıcı giriş yapmamış');
+      // Oturum açık değilse tüm yerel depolama verilerini temizle
+      this.authStateService.clearSignInData();
+      localStorage.clear();
     }
   }
 

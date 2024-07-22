@@ -1,10 +1,27 @@
-<div>
-    <h1>Welcome to the Home Screen</h1>
-    <ng-container *ngIf="userEmail; else noUser">
-        <p>Logged in as: {{ userEmail }}</p>
-    </ng-container>
-    <ng-template #noUser>
-        <p>No user logged in</p>
-    </ng-template>
-    <p>home-screen works!</p>
+<div class="home-container">
+    <img src="/assets/img/logo-atcint.svg" alt="Logo" class="logo">
+
+    <h1 id="hoş-geldiniz-useremail-kullanıcı" class="welcome-message">
+        Hoş Geldiniz, <span class="user-email">{{userEmail || 'Kullanıcı'}}</span>
+    </h1>
+
+    <div class="options-container">
+        <div class="option-card" (click)="navigateTo('account')">
+            <i class="fas fa-user"></i>
+            <h2>Hesabım</h2>
+            <p>Hesap bilgilerinizi yönetin</p>
+        </div>
+
+        <div class="option-card" (click)="navigateTo('systems')">
+            <i class="fas fa-cogs"></i>
+            <h2>Sistemlerim</h2>
+            <p>Sistemlerinizi görüntüleyin ve yönetin</p>
+        </div>
+
+        <div class="option-card logout-card" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <h2>Çıkış Yap</h2>
+            <p>Oturumunuzu sonlandırın</p>
+        </div>
+    </div>
 </div>
