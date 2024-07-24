@@ -5,7 +5,8 @@ import { LoginScreenComponent } from './login-screen/login-screen.component';
 import { ChangePasswordComponent } from './login-screen/change-password/change-password.component';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
 import { authGuard } from './guards/auth-guard';
-import { CreateUserComponent } from './create-user/create-user.component';
+import { AdminScreenComponent } from './admin-screen/admin-screen.component';
+import { AddUserComponent } from './add-user/add-user.component';
 
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
     { path: 'hakkimizda', component: AboutScreenComponent },
     { path: 'giris-yap', component: LoginScreenComponent },
     { path: 'sifre-degistir', component: ChangePasswordComponent },
-    { path: 'kullanici-olustur', component: CreateUserComponent },
+    { path: 'yonetim', component: AdminScreenComponent },
+    { path: 'kullanici-ekle', component: AddUserComponent },
     { path: '**', redirectTo: '' }
 ];

@@ -7,19 +7,25 @@
 
     <div class="options-container">
         <div class="option-card" (click)="navigateTo('kullanici-olustur')">
-            <i class="fas fa-user"></i>
+            <i class="pi pi-user"></i>
             <h2>Hesabım</h2>
             <p>Hesap bilgilerinizi yönetin</p>
         </div>
 
         <div class="option-card" (click)="navigateTo('systems')">
-            <i class="fas fa-cogs"></i>
+            <i class="pi pi-cog"></i>
             <h2>Sistemlerim</h2>
             <p>Sistemlerinizi görüntüleyin ve yönetin</p>
         </div>
 
+        <div class="option-card" (click)="navigateTo('yonetim')">
+            <i class="pi pi-shield"></i>
+            <h2>Yönetim</h2>
+            <p>Yönetici paneline erişin</p>
+        </div>
+
         <div class="option-card logout-card" (click)="logout()">
-            <i class="fas fa-sign-out-alt"></i>
+            <i class="pi pi-sign-out"></i>
             <h2>Çıkış Yap</h2>
             <p>Oturumunuzu sonlandırın</p>
         </div>

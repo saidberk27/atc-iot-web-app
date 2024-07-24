@@ -5,6 +5,7 @@ const schema = a.schema({
     email: a.string(),
     firstName: a.string(),
     lastName: a.string(),
+    phone: a.string(),
     organization: a.string()
   })
     .authorization(allow => [allow.publicApiKey()])

@@ -1,0 +1,31 @@
+<div class="management-container">
+    <img src="/assets/img/logo-atcint.svg" alt="Logo" class="logo">
+
+    <h1 class="panel-title">Yönetim Paneli</h1>
+
+    <div class="options-container">
+        <div class="option-card" (click)="navigateTo('kullanici-ekle')">
+            <i class="pi pi-user-plus"></i>
+            <h2>Kullanıcı Ekle</h2>
+            <p>Yeni kullanıcı hesabı oluşturun</p>
+        </div>
+
+        <div class="option-card" (click)="navigateTo('sistem-ekle')">
+            <i class="pi pi-cog"></i>
+            <h2>Sistem Ekle</h2>
+            <p>Yeni sistem kaydı oluşturun</p>
+        </div>
+
+        <div class="option-card" (click)="navigateTo('cihaz-ekle')">
+            <i class="pi pi-mobile"></i>
+            <h2>Cihaz Ekle</h2>
+            <p>Yeni cihaz kaydı oluşturun</p>
+        </div>
+
+        <div class="option-card" (click)="navigateTo('ana-sayfa')">
+            <i class="pi pi-home"></i>
+            <h2>Ana Sayfa</h2>
+            <p>Ana sayfaya dönün</p>
+        </div>
+    </div>
+</div>

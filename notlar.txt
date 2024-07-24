@@ -1,0 +1,9 @@
+npm run start
+
+backend notlar:
+- Eğer aws configure sso ile ilgili bir sorun olursa, ve bir türlü 'npx ampx sandbox' komutu çalışmıyorsa 
+        1 - tekrardan aws configure sso yap
+        2 - profile name al (bu örnekte benimki said_admin)
+        3 - npx ampx admin sandbox --profile said_admin komutu olarak çalıtşır. 
+
+- backendde değişiklik yaptıktan sonra angular_outputs.json'u da mutlaka güncelle.
