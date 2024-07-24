@@ -1,0 +1,22 @@
+<div class="create-user-container">
+    <h2>Yeni Kullanıcı Oluştur</h2>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="p-field">
+            <label for="email">E-Posta</label>
+            <input id="email" type="email" pInputText formControlName="email">
+        </div>
+        <div class="p-field">
+            <label for="firstName">İsim</label>
+            <input id="firstName" type="text" pInputText formControlName="firstName">
+        </div>
+        <div class="p-field">
+            <label for="lastName">Soyisim</label>
+            <input id="lastName" type="text" pInputText formControlName="lastName">
+        </div>
+        <div class="p-field">
+            <label for="organization">Kuruluş Adı</label>
+            <input id="organization" type="text" pInputText formControlName="organization">
+        </div>
+        <button pButton type="submit" label="Kullanıcı Oluştur" [disabled]="userForm.invalid"></button>
+    </form>
+</div>
