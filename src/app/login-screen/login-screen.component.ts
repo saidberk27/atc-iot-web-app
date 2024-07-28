@@ -53,6 +53,7 @@ export class LoginScreenComponent implements OnInit {
       console.log('Kullanıcı giriş yapmamış');
       // Oturum açık değilse tüm yerel depolama verilerini temizle
       this.authStateService.clearSignInData();
+      this.authStateService.clearTempEmail();
       localStorage.clear();
     }
   }
@@ -99,15 +100,14 @@ export class LoginScreenComponent implements OnInit {
             if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
               this.authStateService.setSignInData(nextStep);
               this.router.navigate(['/sifre-degistir']);
-            } else if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_SMS_CODE' ||
-              nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_TOTP_CODE') {
-              this.showMfaInput = true;
-              this.signInData = nextStep;
-              this.authStateService.setSignInData(nextStep);
-              this.errorMessage = nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_SMS_CODE'
-                ? 'Lütfen telefonunuza gönderilen MFA kodunu girin.'
-                : 'Lütfen TOTP uygulamanızdan aldığınız MFA kodunu girin.';
-            } else {
+            }
+
+            else if (nextStep.signInStep === 'CONFIRM_SIGN_UP') {
+              this.authStateService.setTempEmail(email);
+              this.router.navigate(['/ilk-kayit']);
+            }
+
+            else {
               this.errorMessage = 'Beklenmeyen ek doğrulama adımı gerekli: ' + nextStep.signInStep;
             }
           }
