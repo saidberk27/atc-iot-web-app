@@ -71,3 +71,55 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+@media screen and (max-width: 767px) {
+    .col-12 {
+        padding: 1rem;
+    }
+
+    .text-4xl {
+        font-size: 2rem;
+    }
+
+    .text-6xl {
+        font-size: 2.5rem;
+    }
+
+    .flex.justify-content-center {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .flex.align-items-center {
+        margin-bottom: 0.5rem;
+    }
+
+    button {
+        margin-bottom: 0.5rem;
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+.surface-section {
+    overflow-x: hidden;
+}
+
+.text-center {
+    text-align: center;
+}
+
+button {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.flex.justify-content-center {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.flex.align-items-center {
+    justify-content: center;
+}
