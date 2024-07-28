@@ -46,6 +46,20 @@ html {
     color: #ffffff;
 }
 
+/* Bottom Hero is an Exception */
+.final-section {
+    background-color: #f0f0f0;
+    color: #333;
+    height: auto;
+    /* Allow the section to grow based on content */
+    min-height: 100vh;
+    /* Ensure it takes at least full viewport height */
+    scroll-snap-align: start;
+    /* Snap to start of the section */
+    overflow: hidden;
+    /* Prevent content from overflowing */
+}
+
 .text-container {
     max-width: 800px;
     text-align: center;
@@ -115,8 +129,6 @@ html {
     right: 5%;
 }
 
-
-
 /* Animation classes */
 #photo.animate .feature-image {
     transform: translateX(-75%);
@@ -126,23 +138,6 @@ html {
     opacity: 1;
     transform: translateX(0);
 }
-
-@media (max-width: 768px) {
-    #photo .feature-image {
-        max-width: 80%;
-    }
-
-    #photo .description-text {
-        font-size: 1.4rem;
-        width: 80%;
-    }
-
-    #photo.animate .feature-image {
-        transform: translateX(-100%);
-    }
-}
-
-
 
 #intro {
     display: flex;
@@ -178,4 +173,36 @@ html {
     #intro .logo {
         width: 80%;
     }
+
+    #photo .feature-image {
+        max-width: 80%;
+    }
+
+    #photo .description-text {
+        font-size: 1.4rem;
+        width: 80%;
+    }
+
+    #photo.animate .feature-image {
+        transform: translateX(-100%);
+    }
+
+    .final-section {
+        padding: 2rem 1rem;
+        /* Add some padding for mobile */
+    }
+}
+
+/* Add these new styles for better responsiveness */
+app-bottom-hero-section,
+app-bottom-hero-section-2 {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.sequence-item.final-section {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
 }
