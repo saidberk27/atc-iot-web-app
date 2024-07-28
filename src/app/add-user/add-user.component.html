@@ -29,6 +29,26 @@
             <input id="organization" type="text" pInputText formControlName="organization">
         </div>
 
+        <div class="form-field">
+            <label for="password">Parola</label>
+            <p-password id="password" formControlName="password" [feedback]="true" [toggleMask]="true"
+                [inputStyle]="{'width':'100%'}"></p-password>
+        </div>
+
+        <div class="form-field">
+            <label for="confirmPassword">Parola Tekrar</label>
+            <p-password id="confirmPassword" formControlName="confirmPassword" [feedback]="false" [toggleMask]="true"
+                [inputStyle]="{'width':'100%'}"></p-password>
+        </div>
+
+        <div *ngIf="errorMessages.length > 0" class="error-messages">
+            <ul>
+                <li *ngFor="let message of errorMessages">• {{ message }}</li>
+            </ul>
+        </div>
+
         <button pButton type="submit" label="Kullanıcı Ekle" [disabled]="userForm.invalid"></button>
     </form>
 </div>
+
+<p-toast></p-toast>

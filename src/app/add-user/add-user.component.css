@@ -73,3 +73,17 @@ button {
         cursor: not-allowed;
     }
 }
+
+.error-messages {
+    color: red;
+    margin-top: 10px;
+}
+
+.error-messages ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.error-messages li {
+    margin-bottom: 5px;
+}

@@ -9,6 +9,10 @@ export class AuthStateService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  //First Login icin gerekli---
+  private tempEmailSubject = new BehaviorSubject<string | null>(null);
+  tempEmail$ = this.tempEmailSubject.asObservable();
+
   constructor() {
     this.checkAuthStatus();
   }
@@ -48,5 +52,14 @@ export class AuthStateService {
     } catch (error) {
       console.error('Error clearing auth data from localStorage:', error);
     }
+  }
+
+  //First login icin gerekli---
+  setTempEmail(email: string) {
+    this.tempEmailSubject.next(email);
+  }
+
+  clearTempEmail() {
+    this.tempEmailSubject.next(null);
   }
 }

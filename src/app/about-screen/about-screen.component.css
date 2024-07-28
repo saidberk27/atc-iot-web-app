@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.scroll-container {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.sequence-item {
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Color combinations */
+.color-scheme-1 {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.color-scheme-2 {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.color-scheme-3 {
+    background-color: #34495e;
+    color: #ffffff;
+}
+
+.text-container {
+    max-width: 800px;
+    text-align: center;
+}
+
+.intro-text,
+.description-text,
+.conclusion-text {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 2.5rem;
+    line-height: 1.6;
+}
+
+.intro-text span {
+    display: inline-block;
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.feature-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#photo .content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#photo .feature-image {
+    max-width: 50%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    transition: transform 1s ease;
+}
+
+#photo .description-text {
+    width: 40%;
+    max-width: 600px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 1s ease, transform 1s ease;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 1.8rem;
+    line-height: 1.6;
+    text-align: left;
+    position: absolute;
+    right: 5%;
+}
+
+
+
+/* Animation classes */
+#photo.animate .feature-image {
+    transform: translateX(-75%);
+}
+
+#photo.animate .description-text {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+    #photo .feature-image {
+        max-width: 80%;
+    }
+
+    #photo .description-text {
+        font-size: 1.4rem;
+        width: 80%;
+    }
+
+    #photo.animate .feature-image {
+        transform: translateX(-100%);
+    }
+}
+
+
+
+#intro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#intro .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#intro .logo {
+    width: 100%;
+    max-width: 600px;
+}
+
+#intro .description-text {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+
+    .intro-text,
+    .description-text,
+    .conclusion-text {
+        font-size: 1.8rem;
+    }
+
+    #intro .logo {
+        width: 80%;
+    }
+}
