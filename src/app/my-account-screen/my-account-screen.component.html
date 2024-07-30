@@ -1,9 +1,14 @@
 <div class="container">
     <div class="sidebar">
-        <img [src]="profileImageUrl" alt="Profil Resmi" class="profile-image">
+        <div class="profile-container">
+            <img [src]="profileImageUrl" alt="Profil Resmi" class="profile-image">
+        </div>
         <div class="user-info">
-            <p>{{ userAttributes?.name || 'Ad Soyad' }}</p>
-            <p>{{ userAttributes?.email || 'E-posta' }}</p>
+            <p><b>İsim: </b>{{ userAttributes?.["custom:firstName"] || '' }}</p>
+            <p><b>Soyisim: </b>{{ userAttributes?.["custom:lastName"] || '' }}</p>
+            <p><b>Organizasyon: </b>{{ userAttributes?.["custom:organization"] || '' }}</p>
+            <p><b>Telefon: </b>{{ userAttributes?.["custom:phone"] || '' }}</p>
+            <p><b>E - Posta: </b>{{ userAttributes?.["custom:email"] || '' }}</p>
             <!-- Diğer kullanıcı bilgileri -->
         </div>
     </div>
@@ -32,13 +37,11 @@
                     <h2>Kullanıcı İstatistikleri</h2>
                     <p>İstatistiklerinize Göz Atın</p>
                 </div>
-
                 <div class="option-card" (click)="navigateTo('teknik-destek')">
                     <i class="pi pi-user-edit"></i>
                     <h2>Bilgileri Güncelle</h2>
-                    <p>Bir Önceki Menüye Geri Dönün</p>
+                    <p>E - Posta, İsim, Telefon Gibi Bilgilerinizi Güncelleyin</p>
                 </div>
-
                 <div class="option-card" (click)="navigateTo('ana-sayfa')">
                     <i class="pi pi-home"></i>
                     <h2>Ana Sayfa</h2>
@@ -47,3 +50,4 @@
             </div>
         </div>
     </div>
+</div>
