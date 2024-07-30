@@ -1,0 +1,110 @@
+.container {
+    display: flex;
+    padding: 10%;
+    height: 100vh;
+    background-color: #f5f7fa;
+}
+
+.sidebar {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.profile-image {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 50%;
+}
+
+.user-info {
+    margin-top: 20px;
+}
+
+.options-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.option-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 30%;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.option-card i {
+    font-size: 2.5rem;
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+.option-card h2 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.option-card p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.bottom-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.sub-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+    width: 48%;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.home-button {
+    width: 100%;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}

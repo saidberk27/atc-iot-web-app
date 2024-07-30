@@ -1,0 +1,49 @@
+<div class="container">
+    <div class="sidebar">
+        <img [src]="profileImageUrl" alt="Profil Resmi" class="profile-image">
+        <div class="user-info">
+            <p>{{ userAttributes?.name || 'Ad Soyad' }}</p>
+            <p>{{ userAttributes?.email || 'E-posta' }}</p>
+            <!-- Diğer kullanıcı bilgileri -->
+        </div>
+    </div>
+    <div class="content">
+        <div class="options-container">
+            <div class="option-card" (click)="navigateTo('binalarim')">
+                <i class="pi pi-building"></i>
+                <h2>Binalarım</h2>
+                <p>Bina bilgilerinizi yönetin</p>
+            </div>
+            <div class="option-card" (click)="navigateTo('araclarim')">
+                <i class="pi pi-car"></i>
+                <h2>Araçlarım</h2>
+                <p>Araç bilgilerinizi yönetin</p>
+            </div>
+            <div class="option-card" (click)="navigateTo('teknik-destek')">
+                <i class="pi pi-cog"></i>
+                <h2>Teknik Destek Talep Et</h2>
+                <p>Yardım ve destek alın</p>
+            </div>
+        </div>
+        <div class="bottom-buttons">
+            <div class="sub-buttons">
+                <div class="option-card" (click)="navigateTo('teknik-destek')">
+                    <i class="pi pi-chart-line"></i>
+                    <h2>Kullanıcı İstatistikleri</h2>
+                    <p>İstatistiklerinize Göz Atın</p>
+                </div>
+
+                <div class="option-card" (click)="navigateTo('teknik-destek')">
+                    <i class="pi pi-user-edit"></i>
+                    <h2>Bilgileri Güncelle</h2>
+                    <p>Bir Önceki Menüye Geri Dönün</p>
+                </div>
+
+                <div class="option-card" (click)="navigateTo('ana-sayfa')">
+                    <i class="pi pi-home"></i>
+                    <h2>Ana Sayfa</h2>
+                    <p>Ana Sayfa'ya Geri Dönün</p>
+                </div>
+            </div>
+        </div>
+    </div>

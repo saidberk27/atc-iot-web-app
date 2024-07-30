@@ -8,6 +8,7 @@ import { authGuard } from './guards/auth-guard';
 import { AdminScreenComponent } from './admin-screen/admin-screen.component';
 import { AddUserComponent } from './add-user/add-user.component';
 import { FirstSignInComponent } from './login-screen/first-sign-in/first-sign-in.component';
+import { MyAccountScreenComponent } from './my-account-screen/my-account-screen.component';
 
 
 export const routes: Routes = [
@@ -19,5 +20,6 @@ export const routes: Routes = [
     { path: 'yonetim', component: AdminScreenComponent },
     { path: 'kullanici-ekle', component: AddUserComponent },
     { path: 'ilk-kayit', component: FirstSignInComponent },
+    { path: 'hesabim', component: MyAccountScreenComponent },
     { path: '**', redirectTo: '' }
 ];
