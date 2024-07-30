@@ -41,7 +41,7 @@ export class FirstSignInComponent implements OnInit, OnDestroy {
           this.username = email;
         } else {
           console.error('E-posta adresi bulunamadı.');
-          this.router.navigate(['/login']);
+          this.router.navigate(['/giris-yap']);
         }
       }
     );
@@ -68,7 +68,7 @@ export class FirstSignInComponent implements OnInit, OnDestroy {
           this.errorMessage = '';
           this.authStateService.clearTempEmail(); // Geçici email'i temizle
           // Kullanıcıyı ana sayfaya yönlendir
-          setTimeout(() => this.router.navigate(['/home']), 2000);
+          setTimeout(() => this.router.navigate(['/giris-yap']), 2000);
         } else {
           this.errorMessage = 'Doğrulama tamamlanamadı. Lütfen tekrar deneyin.';
           this.successMessage = '';
