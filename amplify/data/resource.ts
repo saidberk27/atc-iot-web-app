@@ -12,7 +12,7 @@ const schema = a.schema({
     systems: a.hasMany('System', 'userID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   System: a.model({
     id: a.id(),
@@ -23,7 +23,7 @@ const schema = a.schema({
     vehicles: a.hasMany('Vehicle', 'systemID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   Building: a.model({
     id: a.id(),
@@ -35,7 +35,7 @@ const schema = a.schema({
     units: a.hasMany('Unit', 'buildingID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   Vehicle: a.model({
     id: a.id(),
@@ -47,7 +47,7 @@ const schema = a.schema({
     units: a.hasMany('Unit', 'vehicleID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   Unit: a.model({
     id: a.id(),
@@ -58,7 +58,7 @@ const schema = a.schema({
     devices: a.hasMany('Device', 'unitID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   Device: a.model({
     id: a.id(),
@@ -71,7 +71,7 @@ const schema = a.schema({
     temperatureHumidityData: a.hasOne('TemperatureHumidityData', 'temperatureHumidityDataID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   GPSData: a.model({
     id: a.id(),
@@ -86,7 +86,7 @@ const schema = a.schema({
     device: a.belongsTo('Device', 'deviceID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 
   TemperatureHumidityData: a.model({
     id: a.id(),
@@ -96,7 +96,7 @@ const schema = a.schema({
     device: a.belongsTo('Device', 'deviceID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
-  }),
+  }).authorization(allow => [allow.publicApiKey()]),
 });
 
 // Used for code completion / highlighting when making requests from frontend
