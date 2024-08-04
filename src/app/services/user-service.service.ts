@@ -54,7 +54,6 @@ export class UserService {
 
   async createUser(userData: any): Promise<any> {
     try {
-      const currentUser = await getCurrentUser();
       const userAttributes = await fetchUserAttributes();
       const userRole = userAttributes['custom:role'];
 
@@ -81,17 +80,18 @@ export class UserService {
   }
 
   private async signUpUser(userData: any): Promise<any> {
+    console.log(userData.firstName)
     return signUp({
-      username: userData['custom:email'],
+      username: userData.email,
       password: userData.password,
       options: {
         userAttributes: {
-          'custom:email': userData['custom:email'],
-          'custom:firstName': userData['custom:firstName'],
-          'custom:lastName': userData['custom:lastName'],
-          'custom:phone': userData['custom:phone'],
-          'custom:organization': userData['custom:organization'],
-          'custom:role': userData['custom:role']
+          email: userData.email,
+          'custom:firstName': userData.firstName,
+          'custom:lastName': userData.lastName,
+          'custom:phone': userData.phone,
+          'custom:organization': userData.organization,
+          'custom:role': userData.role
         }
       }
     });
