@@ -30,6 +30,12 @@
         </div>
 
         <div class="form-field">
+            <label for="role">Rol</label>
+            <p-dropdown id="role" [options]="roleOptions" formControlName="role" placeholder="Rol seçiniz"
+                [style]="{'width':'100%'}"></p-dropdown>
+        </div>
+
+        <div class="form-field">
             <label for="password">Parola</label>
             <p-password id="password" formControlName="password" [feedback]="true" [toggleMask]="true"
                 [inputStyle]="{'width':'100%'}"></p-password>

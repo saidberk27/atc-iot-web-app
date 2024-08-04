@@ -17,7 +17,12 @@ export const routes: Routes = [
     { path: 'hakkimizda', component: AboutScreenComponent },
     { path: 'giris-yap', component: LoginScreenComponent },
     { path: 'sifre-degistir', component: ChangePasswordComponent },
-    { path: 'yonetim', component: AdminScreenComponent },
+    {
+        path: 'yonetim',
+        component: AdminScreenComponent,
+        canActivate: [authGuard],
+        data: { allowedRoles: ['Admin'] }
+    },
     { path: 'kullanici-ekle', component: AddUserComponent },
     { path: 'ilk-kayit', component: FirstSignInComponent },
     { path: 'hesabim', component: MyAccountScreenComponent },

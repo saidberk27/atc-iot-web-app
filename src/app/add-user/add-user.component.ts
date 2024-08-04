@@ -8,6 +8,9 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user-service.service';
 import { PasswordModule } from 'primeng/password';
+import { DropdownModule } from 'primeng/dropdown';
+
+
 
 @Component({
   selector: 'app-add-user',
@@ -18,7 +21,9 @@ import { PasswordModule } from 'primeng/password';
     InputTextModule,
     ButtonModule,
     ToastModule,
-    PasswordModule
+    PasswordModule,
+    DropdownModule,
+
   ],
   providers: [MessageService],
   templateUrl: './add-user.component.html',
@@ -27,6 +32,11 @@ import { PasswordModule } from 'primeng/password';
 export class AddUserComponent implements OnInit {
   userForm: FormGroup;
   errorMessages: string[] = [];
+  roleOptions = [
+    { label: 'Yönetici', value: 'Admin' },
+    { label: 'Editör', value: 'Editor' },
+    { label: 'Kullanıcı', value: 'User' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -40,6 +50,7 @@ export class AddUserComponent implements OnInit {
       lastName: ['', Validators.required],
       phone: ['', Validators.required],
       organization: ['', Validators.required],
+      role: ['', Validators.required],
       password: ['', [
         Validators.required,
         Validators.minLength(8),
@@ -55,7 +66,6 @@ export class AddUserComponent implements OnInit {
       this.updateErrorMessages();
     });
   }
-
 
   passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
@@ -104,19 +114,17 @@ export class AddUserComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.userForm.valid) {
-      this.userService.createUser(this.userForm.value).subscribe({
-        next: (response) => {
-          console.log('User created successfully', response);
-          this.showSuccessMessage('Üye ekleme başarılı');
-          setTimeout(() => this.router.navigate(['/yonetim']), 3000);
-        },
-        error: (error) => {
-          console.error('Error creating user', error);
-          this.showErrorMessage(this.getErrorMessage(error));
-        }
-      });
+      try {
+        const response = await this.userService.createUser(this.userForm.value);
+        console.log('User created successfully', response);
+        this.showSuccessMessage('Üye ekleme başarılı');
+        setTimeout(() => this.router.navigate(['/yonetim']), 3000);
+      } catch (error) {
+        console.error('Error creating user', error);
+        this.showErrorMessage(this.getErrorMessage(error));
+      }
     }
   }
 

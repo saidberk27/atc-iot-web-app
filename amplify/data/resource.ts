@@ -8,7 +8,7 @@ const schema = a.schema({
     lastName: a.string().required(),
     phone: a.string(),
     organization: a.string().required(),
-    userRole: a.string().required(),
+    userRole: a.string(),
     systems: a.hasMany('System', 'userID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
-import { signUp } from 'aws-amplify/auth';
+import { signUp, getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -52,44 +52,48 @@ export class UserService {
     }
   }
 
-  createUser(userData: any): Observable<any> {
-    return new Observable(observer => {
-      this.signUpUser(userData)
-        .then(() => {
-          return this.client.models.User.create({
-            email: userData.email,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            phone: userData.phone,
-            organization: userData.organization,
-            userRole: 'admin'
-          });
-        })
-        .then(response => {
-          observer.next(response);
-          observer.complete();
-        })
-        .catch(error => {
-          observer.error(error);
-        });
-    });
+  async createUser(userData: any): Promise<any> {
+    try {
+      const currentUser = await getCurrentUser();
+      const userAttributes = await fetchUserAttributes();
+      const userRole = userAttributes['custom:role'];
+
+      if (userRole !== 'Admin') {
+        throw new Error('Yalnızca adminler kullanıcı ekleyebilir.');
+      }
+
+      await this.signUpUser(userData);
+
+      const newUser = await this.client.models.User.create({
+        email: userData['custom:email'],
+        firstName: userData['custom:firstName'],
+        lastName: userData['custom:lastName'],
+        phone: userData['custom:phone'],
+        organization: userData['custom:organization'],
+        userRole: userData['custom:role']
+      });
+
+      return newUser;
+    } catch (error) {
+      console.error('Kullanıcı oluşturma hatası:', error);
+      throw error;
+    }
   }
 
-  private signUpUser(userData: any): Promise<any> {
+  private async signUpUser(userData: any): Promise<any> {
     return signUp({
-      username: userData.email,
-      password: userData.password, // Güvenli bir şekilde yönetilmeli
+      username: userData['custom:email'],
+      password: userData.password,
       options: {
         userAttributes: {
-          'custom:email': userData.email,
-          'custom:firstName': userData.firstName,
-          'custom:lastName': userData.lastName,
-          'custom:phone': userData.phone,
-          'custom:organization': userData.organization // Attribute'leri degistirmek icin cognito->user pools-> sign up experience->custom attributes
+          'custom:email': userData['custom:email'],
+          'custom:firstName': userData['custom:firstName'],
+          'custom:lastName': userData['custom:lastName'],
+          'custom:phone': userData['custom:phone'],
+          'custom:organization': userData['custom:organization'],
+          'custom:role': userData['custom:role']
         }
       }
     });
   }
-
-
 }

@@ -7,3 +7,4 @@ backend notlar:
         3 - npx ampx admin sandbox --profile said_admin komutu olarak çalıtşır. 
 
 - backendde değişiklik yaptıktan sonra angular_outputs.json'u da mutlaka güncelle.
+-main.ts'içinde provideAnimations() mutlaka ekle.
