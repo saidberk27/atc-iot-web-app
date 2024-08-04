@@ -61,7 +61,8 @@ export class UserService {
             firstName: userData.firstName,
             lastName: userData.lastName,
             phone: userData.phone,
-            organization: userData.organization
+            organization: userData.organization,
+            userRole: 'admin'
           });
         })
         .then(response => {
