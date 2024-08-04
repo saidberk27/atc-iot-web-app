@@ -121,7 +121,7 @@ export class AddUserComponent implements OnInit {
         const response = await this.userService.createUser(this.userForm.value);
         console.log('User created successfully', response);
         this.showSuccessMessage('Üye ekleme başarılı');
-        setTimeout(() => this.router.navigate(['/yonetim']), 3000);
+        setTimeout(() => this.router.navigate(['/yonetim']), 1000);
       } catch (error) {
         console.error('Error creating user', error);
         this.showErrorMessage(this.getErrorMessage(error));
