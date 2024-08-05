@@ -23,7 +23,12 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { allowedRoles: ['Admin'] }
     },
-    { path: 'kullanici-ekle', component: AddUserComponent },
+    {
+        path: 'kullanici-ekle',
+        component: AddUserComponent,
+        canActivate: [authGuard],
+        data: { allowedRoles: ['Admin'] }
+    },
     { path: 'ilk-kayit', component: FirstSignInComponent },
     { path: 'hesabim', component: MyAccountScreenComponent },
     { path: '**', redirectTo: '' }

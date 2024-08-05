@@ -18,7 +18,7 @@
             <p>Sistemlerinizi görüntüleyin ve yönetin</p>
         </div>
 
-        <div class="option-card" (click)="navigateTo('yonetim')">
+        <div *ngIf="userRole == 'Admin'" class="option-card" (click)="navigateTo('yonetim')">
             <i class="pi pi-shield"></i>
             <h2>Yönetim</h2>
             <p>Yönetici paneline erişin</p>

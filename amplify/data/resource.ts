@@ -10,6 +10,8 @@ const schema = a.schema({
     organization: a.string().required(),
     userRole: a.string(),
     systems: a.hasMany('System', 'userID'),
+    buildings: a.hasMany('Building', 'userID'),
+    vehicles: a.hasMany('Vehicle', 'userID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
   }).authorization(allow => [allow.publicApiKey()]),

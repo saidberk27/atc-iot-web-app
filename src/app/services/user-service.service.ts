@@ -64,12 +64,12 @@ export class UserService {
       await this.signUpUser(userData);
 
       const newUser = await this.client.models.User.create({
-        email: userData['custom:email'],
-        firstName: userData['custom:firstName'],
-        lastName: userData['custom:lastName'],
-        phone: userData['custom:phone'],
-        organization: userData['custom:organization'],
-        userRole: userData['custom:role']
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phone,
+        organization: userData.organization,
+        userRole: userData.role
       });
 
       return newUser;

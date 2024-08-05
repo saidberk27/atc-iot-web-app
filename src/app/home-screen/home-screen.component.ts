@@ -16,6 +16,7 @@ export class HomeScreenComponent implements OnInit {
   userEmail: string | null = null;
   userAttributes: any;
   fullName: string | null = null;
+  userRole: string | null = "User";
   constructor(
     private authStateService: AuthStateService,
     private router: Router
@@ -24,8 +25,8 @@ export class HomeScreenComponent implements OnInit {
   ngOnInit() {
     this.authStateService.userAttributes$.subscribe(attributes => {
       this.userAttributes = attributes;
-      console.log(this.userAttributes);
       this.fullName = `${attributes['custom:firstName']} ${attributes['custom:lastName']}`
+      this.userRole = attributes['custom:role']
     });
   }
 
