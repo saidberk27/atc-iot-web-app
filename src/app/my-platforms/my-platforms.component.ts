@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-my-platforms',
@@ -8,5 +10,10 @@ import { Component } from '@angular/core';
   styleUrl: './my-platforms.component.css'
 })
 export class MyPlatformsComponent {
-
+  readonly title = "Platformlarım";
+  constructor(private router: Router) {
+  }
+  navigateTo(destination: string) {
+    this.router.navigate([`/${destination}`]);
+  }
 }
