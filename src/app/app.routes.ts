@@ -9,6 +9,9 @@ import { AdminScreenComponent } from './admin-screen/admin-screen.component';
 import { AddUserComponent } from './add-user/add-user.component';
 import { FirstSignInComponent } from './login-screen/first-sign-in/first-sign-in.component';
 import { MyAccountScreenComponent } from './my-account-screen/my-account-screen.component';
+import { MyPlatformsComponent } from './my-platforms/my-platforms.component';
+import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
+import { MyBuildingsComponent } from './my-buildings/my-buildings.component';
 
 
 export const routes: Routes = [
@@ -31,5 +34,20 @@ export const routes: Routes = [
     },
     { path: 'ilk-kayit', component: FirstSignInComponent },
     { path: 'hesabim', component: MyAccountScreenComponent },
+    {
+        path: 'platformlarim',
+        component: MyPlatformsComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'araclarim',
+        component: MyVehiclesComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'binalarim',
+        component: MyBuildingsComponent,
+        canActivate: [authGuard]
+    },
     { path: '**', redirectTo: '' }
 ];

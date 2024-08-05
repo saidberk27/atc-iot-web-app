@@ -12,10 +12,10 @@
             <p>Hesap bilgilerinizi yönetin</p>
         </div>
 
-        <div class="option-card" (click)="navigateTo('systems')">
-            <i class="pi pi-cog"></i>
-            <h2>Sistemlerim</h2>
-            <p>Sistemlerinizi görüntüleyin ve yönetin</p>
+        <div class="option-card" (click)="navigateTo('platformlarim')">
+            <i class="pi pi-sitemap"></i>
+            <h2>Platformlarım</h2>
+            <p>Platformlarınızı görüntüleyin ve yönetin</p>
         </div>
 
         <div *ngIf="userRole == 'Admin'" class="option-card" (click)="navigateTo('yonetim')">
