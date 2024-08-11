@@ -18,13 +18,29 @@ export class MyAccountScreenComponent {
   profileImageUrl: string = 'https://st3.depositphotos.com/1767687/16607/v/450/depositphotos_166074422-stock-illustration-default-avatar-profile-icon-grey.jpg';
   constructor(private authService: AuthStateService, private router: Router) { }
 
-  ngOnInit() {
-    this.authService.userAttributes$.subscribe(attributes => {
-      this.userAttributes = attributes;
-      if (attributes?.picture) {
-        this.profileImageUrl = attributes.picture;
+  async ngOnInit() {
+    try {
+      const storedAttributes = this.authService.getStoredAttributes();
+
+      if (storedAttributes) {
+        this.setUserAttributes(storedAttributes); // Try Local Storage First
+      } else {
+        this.authService.userAttributes$.subscribe(async fetchedAttributes => {
+          if (fetchedAttributes) {
+            this.setUserAttributes(fetchedAttributes); // Then go database
+          }
+        });
+
+        await this.authService.fetchAndStoreUserAttributes();
       }
-    });
+    } catch (error) {
+      console.error('Error initializing home component:', error);
+    }
+  }
+
+  private setUserAttributes(attributes: any) {
+    this.userAttributes = attributes;
+
   }
 
   navigateTo(destination: string) {

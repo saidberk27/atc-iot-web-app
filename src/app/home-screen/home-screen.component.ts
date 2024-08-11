@@ -22,13 +22,33 @@ export class HomeScreenComponent implements OnInit {
     private router: Router
   ) { }
 
-  ngOnInit() {
-    this.authStateService.userAttributes$.subscribe(attributes => {
-      this.userAttributes = attributes;
-      this.fullName = `${attributes['custom:firstName']} ${attributes['custom:lastName']}`
-      this.userRole = attributes['custom:role']
-    });
+  async ngOnInit() {
+    try {
+      const storedAttributes = this.authStateService.getStoredAttributes();
+
+      if (storedAttributes) {
+        this.setUserAttributes(storedAttributes);
+      } else {
+        this.authStateService.userAttributes$.subscribe(async fetchedAttributes => {
+          if (fetchedAttributes) {
+            this.setUserAttributes(fetchedAttributes);
+          }
+        });
+
+        await this.authStateService.fetchAndStoreUserAttributes();
+      }
+    } catch (error) {
+      console.error('Error initializing home component:', error);
+    }
   }
+
+  private setUserAttributes(attributes: any) {
+    this.userAttributes = attributes;
+    this.fullName = `${attributes['custom:firstName']} ${attributes['custom:lastName']}`;
+    this.userRole = attributes['custom:role'];
+  }
+
+
 
   navigateTo(destination: string) {
     this.router.navigate([`/${destination}`]);

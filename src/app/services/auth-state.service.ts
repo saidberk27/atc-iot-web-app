@@ -7,6 +7,8 @@ import { fetchUserAttributes, getCurrentUser } from 'aws-amplify/auth';
 })
 export class AuthStateService {
   private readonly STORAGE_KEY = 'authSignInData';
+  private readonly ATTRIBUTES_KEY = 'userAttributes';
+
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -26,10 +28,11 @@ export class AuthStateService {
     this.isAuthenticatedSubject.next(isAuthenticated);
 
     if (isAuthenticated) {
-      try {
-        await this.fetchUserAttributes();
-      } catch (error) {
-        console.error('Error fetching user attributes:', error);
+      const storedAttributes = this.getStoredAttributes();
+      if (storedAttributes) {
+        this.userAttributesSubject.next(storedAttributes);
+      } else {
+        await this.fetchAndStoreUserAttributes();
       }
     }
   }
@@ -39,7 +42,7 @@ export class AuthStateService {
       try {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
         this.isAuthenticatedSubject.next(true);
-        this.fetchUserAttributes().then(resolve).catch(reject);
+        this.fetchAndStoreUserAttributes().then(resolve).catch(reject);
       } catch (error) {
         console.error('Error saving auth data to localStorage:', error);
         reject(error);
@@ -48,6 +51,7 @@ export class AuthStateService {
   }
 
   getSignInData(): any {
+
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
       return data ? JSON.parse(data) : null;
@@ -60,6 +64,7 @@ export class AuthStateService {
   clearSignInData(): void {
     try {
       localStorage.removeItem(this.STORAGE_KEY);
+      localStorage.removeItem(this.ATTRIBUTES_KEY);
       this.isAuthenticatedSubject.next(false);
       this.userAttributesSubject.next(null);
     } catch (error) {
@@ -75,11 +80,12 @@ export class AuthStateService {
     this.tempEmailSubject.next(null);
   }
 
-  async fetchUserAttributes(): Promise<void> {
+  public async fetchAndStoreUserAttributes(): Promise<void> {
     try {
       const user = await getCurrentUser();
       if (user) {
         const attributes = await fetchUserAttributes();
+        this.storeAttributes(attributes);
         this.userAttributesSubject.next(attributes);
       } else {
         this.userAttributesSubject.next(null);
@@ -87,6 +93,25 @@ export class AuthStateService {
     } catch (error) {
       console.error('Error fetching user attributes:', error);
       this.userAttributesSubject.next(null);
+    }
+  }
+
+  private storeAttributes(attributes: any): void {
+    try {
+
+      localStorage.setItem(this.ATTRIBUTES_KEY, JSON.stringify(attributes));
+    } catch (error) {
+      console.error('Error storing user attributes in localStorage:', error);
+    }
+  }
+
+  public getStoredAttributes(): any {
+    try {
+      const attributes = localStorage.getItem(this.ATTRIBUTES_KEY);
+      return attributes ? JSON.parse(attributes) : null;
+    } catch (error) {
+      console.error('Error retrieving user attributes from localStorage:', error);
+      return null;
     }
   }
 }
