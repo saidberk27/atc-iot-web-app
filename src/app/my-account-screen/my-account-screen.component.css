@@ -53,7 +53,7 @@
     color: #3498db;
 }
 
-.options-container {
+.upper-buttons {
     display: flex;
     justify-content: space-between;
     gap: 20px;
@@ -135,7 +135,54 @@
     opacity: 0.9;
 }
 
+@media (min-width: 769px) and (max-width: 1280px) {
+    .container {
+        padding: 3%;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .content {
+        gap: 15px;
+        display: block;
+    }
+
+    .upper-buttons {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .option-card {
+        width: calc(33.33% - 10px);
+        height: auto;
+        min-height: 20%;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .option-card i {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+
+    .option-card h2 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .option-card p {
+        font-size: 0.75rem;
+    }
+
+    .bottom-buttons {
+        margin-top: 10px;
+    }
+}
+
 @media (max-width: 768px) {
+
+    /* Phone */
     .container {
         flex-direction: column;
         height: auto;
@@ -151,7 +198,7 @@
         width: 100%;
     }
 
-    .options-container,
+    .upper-buttons,
     .sub-buttons {
         flex-wrap: wrap;
     }
@@ -163,7 +210,9 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+
+    /* Tiny Phone */
     .option-card {
         width: 100%;
     }
