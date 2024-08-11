@@ -10,9 +10,16 @@ import { CardModule } from 'primeng/card';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
+import { DropdownModule } from 'primeng/dropdown';
+
 import { VehicleService } from '../../services/vehicle.service';
 import { MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
+import { SystemService } from '../../services/system.service';
+
+interface SystemOption {
+  id: string;
+  description: string;
+}
 
 @Component({
   selector: 'app-add-new-vehicle',
@@ -28,6 +35,7 @@ import { Router } from '@angular/router';
     MessagesModule,
     MessageModule,
     ToastModule,
+    DropdownModule
   ],
   providers: [MessageService],
   templateUrl: './add-new-vehicle.component.html',
@@ -35,21 +43,30 @@ import { Router } from '@angular/router';
 })
 export class AddNewVehicleComponent {
   vehicleForm: FormGroup;
+  systemOptions: SystemOption[] = [];
 
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
-    private messageService: MessageService,
-    private router: Router
-
+    private systemService: SystemService,
+    private messageService: MessageService
   ) {
     this.vehicleForm = this.fb.group({
       vehicleName: ['', [Validators.required, Validators.minLength(3)]],
-      vehiclePlateNumber: ['', [Validators.required, Validators.pattern(/^(0[1-9]|[1-7][0-9]|8[01])((\s?[a-zA-Z]\s?)(\d{4,5})|(\s?[a-zA-Z]{2}\s?)(\d{3,4})|(\s?[a-zA-Z]{3}\s?)(\d{2,4}))$/)
-      ]],
+      vehiclePlateNumber: ['', [Validators.required, Validators.pattern(/^[A-Z0-9]{1,10}$/)]],
       vehicleDescription: [''],
       systemID: ['', Validators.required]
     });
+  }
+
+  async ngOnInit() {
+    try {
+      this.systemOptions = await this.systemService.listSystems();
+
+    } catch (error) {
+      console.error('Error fetching systems:', error);
+      // Burada bir hata mesajı gösterilebilir
+    }
   }
 
   async onSubmit() {
@@ -57,12 +74,11 @@ export class AddNewVehicleComponent {
       try {
         const newVehicle = await this.vehicleService.createVehicle(this.vehicleForm.value);
         console.log('New vehicle created:', newVehicle);
-        this.showSuccessMessage('Yeni Araç Başarıyla Oluşturuldu, Yönlendiriliyorsunuz...')
-        setTimeout(() => this.router.navigate(['/araclarim']), 1000);
+        // Burada başarılı işlem mesajı gösterilebilir
         this.vehicleForm.reset();
       } catch (error) {
         console.error('Error creating vehicle:', error);
-        this.showErrorMessage(this.getErrorMessage(error));
+        // Burada hata mesajı gösterilebilir
       }
     } else {
       // Form geçersizse kullanıcıya bilgi ver
@@ -74,6 +90,7 @@ export class AddNewVehicleComponent {
       });
     }
   }
+
 
   showSuccessMessage(message: string) {
     this.messageService.add({

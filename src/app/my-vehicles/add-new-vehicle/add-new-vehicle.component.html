@@ -1,5 +1,5 @@
 <div class="main-container">
-    <h1 class="panel-title">Add New Vehicle</h1>
+    <h1 class="panel-title">Yeni Araç Ekle</h1>
     <div class="options-container">
         <p-card>
             <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
@@ -27,10 +27,11 @@
                     </div>
 
                     <div class="p-field">
-                        <label for="systemID">System ID</label>
-                        <input id="systemID" type="text" pInputText formControlName="systemID"
-                            placeholder="Enter system ID">
-                        <p-message severity="error" text="System ID is required"
+                        <label for="system">Ait Olduğu Sistem</label>
+                        <p-dropdown id="system" [options]="systemOptions" formControlName="systemID"
+                            optionLabel="description" optionValue="id" placeholder="Sistem Seçin"
+                            [showClear]="true"></p-dropdown>
+                        <p-message severity="error" text="Arac Hangi Sisteme Ekleyeceğinizi Seçmelisiniz"
                             *ngIf="vehicleForm.get('systemID')?.invalid && vehicleForm.get('systemID')?.touched"></p-message>
                     </div>
 
