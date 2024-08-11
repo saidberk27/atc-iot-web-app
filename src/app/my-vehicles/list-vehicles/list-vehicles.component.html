@@ -1,1 +1,30 @@
-<p>list-vehicles works!</p>
+<div class="main-container">
+    <h1 class="panel-title">Vehicle List</h1>
+    <div class="options-container">
+        <p-card *ngFor="let vehicle of vehicles" [header]="vehicle.vehicleName" [subheader]="vehicle.vehiclePlateNumber"
+            (click)="openDialog(vehicle)">
+            <ng-template pTemplate="content">
+                <p>{{ vehicle.vehicleDescription || 'No description available' }}</p>
+            </ng-template>
+        </p-card>
+    </div>
+</div>
+
+<p-dialog [(visible)]="displayDialog" [style]="{width: '300px'}" [modal]="true">
+    <ng-template pTemplate="header">
+        Vehicle Options
+    </ng-template>
+    <div class="p-grid p-fluid">
+        <div class="p-col-12">
+            <p-button label="Update" icon="pi pi-pencil" (click)="updateVehicle()"></p-button>
+        </div>
+        <div class="p-col-12">
+            <p-button label="Delete" icon="pi pi-trash" (click)="deleteVehicle()"></p-button>
+        </div>
+        <div class="p-col-12">
+            <p-button label="View Details" icon="pi pi-eye" (click)="viewVehicleDetails()"></p-button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-toast></p-toast>
