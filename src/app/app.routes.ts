@@ -12,6 +12,7 @@ import { MyAccountScreenComponent } from './my-account-screen/my-account-screen.
 import { MyPlatformsComponent } from './my-platforms/my-platforms.component';
 import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
 import { MyBuildingsComponent } from './my-buildings/my-buildings.component';
+import { AddNewVehicleComponent } from './my-vehicles/add-new-vehicle/add-new-vehicle.component';
 
 
 export const routes: Routes = [
@@ -42,6 +43,11 @@ export const routes: Routes = [
     {
         path: 'araclarim',
         component: MyVehiclesComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'yeni-arac-ekle',
+        component: AddNewVehicleComponent,
         canActivate: [authGuard]
     },
     {

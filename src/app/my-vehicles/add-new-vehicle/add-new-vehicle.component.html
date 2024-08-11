@@ -1,1 +1,45 @@
-<p>add-new-vehicle works!</p>
+<div class="main-container">
+    <h1 class="panel-title">Add New Vehicle</h1>
+    <div class="options-container">
+        <p-card>
+            <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label for="vehicleName">Araç İsmi</label>
+                        <input id="vehicleName" type="text" pInputText formControlName="vehicleName"
+                            placeholder="Tanımanızı kolayaştıracak bir isim girin">
+                        <p-message severity="error" text="Araç ismi en az 3 karakter olmalı"
+                            *ngIf="vehicleForm.get('vehicleName')?.invalid && vehicleForm.get('vehicleName')?.touched"></p-message>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="vehiclePlateNumber">Plaka</label>
+                        <input id="vehiclePlateNumber" type="text" pInputText formControlName="vehiclePlateNumber"
+                            placeholder="Plakanızı boşluk bırakar doğru biçimde girin">
+                        <p-message severity="error" text="Lütfen Geçerli Bir Plaka Giriniz Örnek: 06 ANK 006"
+                            *ngIf="vehicleForm.get('vehiclePlateNumber')?.invalid && vehicleForm.get('vehiclePlateNumber')?.touched"></p-message>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="vehicleDescription">Açıklama (İsteğe Bağlı)</label>
+                        <textarea id="vehicleDescription" pInputTextarea formControlName="vehicleDescription"
+                            placeholder="Aracınızı tanımanızı kolayaştıracak bir açıklama girin"></textarea>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="systemID">System ID</label>
+                        <input id="systemID" type="text" pInputText formControlName="systemID"
+                            placeholder="Enter system ID">
+                        <p-message severity="error" text="System ID is required"
+                            *ngIf="vehicleForm.get('systemID')?.invalid && vehicleForm.get('systemID')?.touched"></p-message>
+                    </div>
+
+                    <p-button type="submit" label="Araç Ekle" icon="pi pi-plus" iconPos="right"
+                        [disabled]="vehicleForm.invalid"></p-button>
+                </div>
+            </form>
+        </p-card>
+    </div>
+</div>
+
+<p-toast />
