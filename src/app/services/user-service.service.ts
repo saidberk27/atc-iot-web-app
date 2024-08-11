@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
-import { signUp, getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
+import { signUp, fetchUserAttributes } from 'aws-amplify/auth';
+import { AuthStateService } from './auth-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  private userAttributes: any;
   private client = generateClient<Schema>();
   private readonly EMAIL_STORAGE_KEY = 'userEmails';
 
-  constructor() { }
+  constructor(private authService: AuthStateService) { }
 
   async setEmail(userId: string, email: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -54,8 +55,11 @@ export class UserService {
 
   async createUser(userData: any): Promise<any> {
     try {
-      const userAttributes = await fetchUserAttributes();
-      const userRole = userAttributes['custom:role'];
+      this.userAttributes = await this.authService.getStoredAttributes();
+      if (!this.userAttributes) {
+        this.userAttributes = await fetchUserAttributes();
+      }
+      const userRole = this.userAttributes['custom:role'];
 
       if (userRole !== 'Admin') {
         throw new Error('Yalnızca adminler kullanıcı ekleyebilir.');
