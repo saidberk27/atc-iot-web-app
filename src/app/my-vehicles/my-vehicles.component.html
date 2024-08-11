@@ -1,1 +1,27 @@
-<p>my-vehicles works!</p>
+<div class="main-container">
+    <h1 class="panel-title">{{title}}</h1>
+    <div class="options-container">
+        <div class="option-card" (click)="navigateTo('araclarim')">
+            <i class="pi pi-truck"></i>
+            <h2>Araçları Listele</h2>
+            <p>Araçlarınızı Görüntüleyin</p>
+        </div>
+
+        <div class="option-card" (click)="navigateTo('yeni-arac-ekle')">
+            <i class="pi pi-plus-circle"></i>
+            <h2>Araç Ekle</h2>
+            <p>Hesabınıza Yeni Araç Kaydı Yapın</p>
+        </div>
+        <div class="option-card" (click)="navigateTo('hesabim')">
+            <i class="pi pi-arrow-circle-left"></i>
+            <h2>Geri Dön</h2>
+            <p>Hesabım Sayfasına Geri Dönün</p>
+        </div>
+        <div class="option-card" (click)="navigateTo('ana-sayfa')">
+            <i class="pi pi-home"></i>
+            <h2>Ana Sayfa</h2>
+            <p>Ana Sayfa'ya Geri Dönün</p>
+        </div>
+
+    </div>
+</div>
