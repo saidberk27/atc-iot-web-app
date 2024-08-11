@@ -80,19 +80,22 @@ export class AuthStateService {
     this.tempEmailSubject.next(null);
   }
 
-  public async fetchAndStoreUserAttributes(): Promise<void> {
+  public async fetchAndStoreUserAttributes(): Promise<any> {
     try {
       const user = await getCurrentUser();
       if (user) {
         const attributes = await fetchUserAttributes();
         this.storeAttributes(attributes);
         this.userAttributesSubject.next(attributes);
+        return attributes;
       } else {
         this.userAttributesSubject.next(null);
+        return null;
       }
     } catch (error) {
       console.error('Error fetching user attributes:', error);
       this.userAttributesSubject.next(null);
+      return null;
     }
   }
 
