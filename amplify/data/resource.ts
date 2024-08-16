@@ -1,6 +1,15 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
+import { sayHello } from '../functions/hello_world_function/resource';
 
 const schema = a.schema({
+
+  sayHello: a
+    .query()
+    .arguments({
+      name: a.string().default("World"),
+    })
+    .returns(a.string())
+    .handler(a.handler.function(sayHello)),
   User: a.model({
     id: a.id(),
     email: a.string().required(),

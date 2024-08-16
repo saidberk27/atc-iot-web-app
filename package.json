@@ -18,7 +18,7 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
-    "@aws-amplify/api": "^6.0.40",
+    "@aws-amplify/api": "^6.0.45",
     "aws-amplify": "^6.4.1",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
