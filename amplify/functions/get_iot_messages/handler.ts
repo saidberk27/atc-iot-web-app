@@ -10,7 +10,9 @@ export const handler = async (event: AppSyncResolverEvent<{ TableName?: string }
   };
 
   try {
+    console.log("Debug yapıyoruzz");
     const result = await dynamodb.scan(params).promise();
+    console.log(result);
     // Dönüş tipini string olarak ayarlıyoruz
     return JSON.stringify(result.Items);
   } catch (error) {

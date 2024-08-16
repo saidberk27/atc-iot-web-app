@@ -17,7 +17,7 @@ export class ApiTestComponentComponent implements OnInit {
     client.queries.getIoTMessages({
       TableName: "IoTMessages",
     }).then((response) => {
-      console.log(response.data);
+      console.log(response);
       // Handle the potential null case
       this.apiText = response.data ?? "Veri alınamadı";
     }).catch((error) => {
