@@ -20,6 +20,7 @@
     "@angular/router": "^17.3.0",
     "@aws-amplify/api": "^6.0.45",
     "aws-amplify": "^6.4.1",
+    "aws-sdk": "^2.1676.0",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.4",

@@ -14,8 +14,8 @@ export class ApiTestComponentComponent implements OnInit {
 
   ngOnInit() {
     const client = generateClient<Schema>();
-    client.queries.sayHello({
-      name: "Amplifya",
+    client.queries.getIoTMessages({
+      TableName: "IoTMessages",
     }).then((response) => {
       console.log(response.data);
       // Handle the potential null case

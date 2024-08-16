@@ -1,7 +1,16 @@
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
 import { sayHello } from '../functions/hello_world_function/resource';
+import { getIoTMessages } from '../functions/get_iot_messages/resource';
 
 const schema = a.schema({
+
+  getIoTMessages: a
+    .query()
+    .arguments({
+      TableName: a.string()
+    })
+    .returns(a.string())
+    .handler(a.handler.function(getIoTMessages)).authorization(allow => [allow.publicApiKey()]),
 
   sayHello: a
     .query()
