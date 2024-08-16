@@ -13,6 +13,7 @@ import { MyPlatformsComponent } from './my-platforms/my-platforms.component';
 import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
 import { MyBuildingsComponent } from './my-buildings/my-buildings.component';
 import { AddNewVehicleComponent } from './my-vehicles/add-new-vehicle/add-new-vehicle.component';
+import { ApiTestComponentComponent } from './api-test-component/api-test-component.component';
 
 
 export const routes: Routes = [
@@ -54,6 +55,10 @@ export const routes: Routes = [
         path: 'binalarim',
         component: MyBuildingsComponent,
         canActivate: [authGuard]
+    },
+    {
+        path: 'api_test',
+        component: ApiTestComponentComponent
     },
     { path: '**', redirectTo: '' }
 ];
