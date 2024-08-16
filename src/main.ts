@@ -17,5 +17,5 @@ const client = generateClient<Schema>()
 
 
 client.queries.sayHello({
-  name: "Amplify",
+  name: "Amplifya",
 })
