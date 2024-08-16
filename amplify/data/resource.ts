@@ -6,7 +6,7 @@ const schema = a.schema({
   sayHello: a
     .query()
     .arguments({
-      name: a.string().default("World"),
+      name: a.string(),
     })
     .returns(a.string())
     .handler(a.handler.function(sayHello)).authorization(allow => [allow.publicApiKey()]),
