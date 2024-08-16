@@ -18,4 +18,9 @@ const client = generateClient<Schema>()
 
 client.queries.sayHello({
   name: "Amplifya",
-})
+}).then((response) => {
+  console.log(response.data);
+});
+
+
+
