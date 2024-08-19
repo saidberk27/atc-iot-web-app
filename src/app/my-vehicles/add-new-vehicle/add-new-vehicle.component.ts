@@ -14,7 +14,7 @@ import { DropdownModule } from 'primeng/dropdown';
 
 import { VehicleService } from '../../services/vehicle.service';
 import { MessageService } from 'primeng/api';
-import { PlatformService } from '../../services/system.service';
+import { PlatformService } from '../../services/platform-service';
 
 interface PlatformOption {
   id: string;

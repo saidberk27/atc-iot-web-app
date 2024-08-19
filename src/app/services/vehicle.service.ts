@@ -15,14 +15,14 @@ export class VehicleService {
     vehicleName: string;
     vehiclePlateNumber: string;
     vehicleDescription?: string;
-    systemID: string;
+    platformID: string;
   }): Promise<any> {
     try {
       const newVehicle = await this.client.models.Vehicle.create({
         vehicleName: vehicleData.vehicleName,
         vehiclePlateNumber: vehicleData.vehiclePlateNumber,
         vehicleDescription: vehicleData.vehicleDescription,
-        systemID: vehicleData.systemID
+        platformID: vehicleData.platformID
       });
       return newVehicle;
     } catch (error) {

@@ -13,7 +13,7 @@ interface Vehicle {
   vehicleName: string;
   vehiclePlateNumber: string;
   vehicleDescription?: string;
-  systemID: string;
+  platformID: string;
 }
 
 @Component({
