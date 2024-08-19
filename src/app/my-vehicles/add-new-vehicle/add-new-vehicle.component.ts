@@ -14,9 +14,9 @@ import { DropdownModule } from 'primeng/dropdown';
 
 import { VehicleService } from '../../services/vehicle.service';
 import { MessageService } from 'primeng/api';
-import { SystemService } from '../../services/system.service';
+import { PlatformService } from '../../services/system.service';
 
-interface SystemOption {
+interface PlatformOption {
   id: string;
   description: string;
 }
@@ -43,28 +43,28 @@ interface SystemOption {
 })
 export class AddNewVehicleComponent {
   vehicleForm: FormGroup;
-  systemOptions: SystemOption[] = [];
+  platformOptions: PlatformOption[] = [];
 
   constructor(
     private fb: FormBuilder,
     private vehicleService: VehicleService,
-    private systemService: SystemService,
+    private platformService: PlatformService,
     private messageService: MessageService
   ) {
     this.vehicleForm = this.fb.group({
       vehicleName: ['', [Validators.required, Validators.minLength(3)]],
       vehiclePlateNumber: ['', [Validators.required, Validators.pattern(/^[A-Z0-9]{1,10}$/)]],
       vehicleDescription: [''],
-      systemID: ['', Validators.required]
+      platformID: ['', Validators.required]
     });
   }
 
   async ngOnInit() {
     try {
-      this.systemOptions = await this.systemService.listSystems();
+      this.platformOptions = await this.platformService.listPlatforms();
 
     } catch (error) {
-      console.error('Error fetching systems:', error);
+      console.error('Error fetching platforms:', error);
       // Burada bir hata mesajı gösterilebilir
     }
   }

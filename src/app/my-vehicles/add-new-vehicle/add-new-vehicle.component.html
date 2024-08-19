@@ -27,12 +27,12 @@
                     </div>
 
                     <div class="p-field">
-                        <label for="system">Ait Olduğu Sistem</label>
-                        <p-dropdown id="system" [options]="systemOptions" formControlName="systemID"
-                            optionLabel="description" optionValue="id" placeholder="Sistem Seçin"
+                        <label for="platform">Ait Olduğu Platformu</label>
+                        <p-dropdown id="platform" [options]="platformOptions" formControlName="platformID"
+                            optionLabel="description" optionValue="id" placeholder="Platform Seçin"
                             [showClear]="true"></p-dropdown>
-                        <p-message severity="error" text="Arac Hangi Sisteme Ekleyeceğinizi Seçmelisiniz"
-                            *ngIf="vehicleForm.get('systemID')?.invalid && vehicleForm.get('systemID')?.touched"></p-message>
+                        <p-message severity="error" text="Arac Hangi Platforma Ekleyeceğinizi Seçmelisiniz"
+                            *ngIf="vehicleForm.get('platformID')?.invalid && vehicleForm.get('platformID')?.touched"></p-message>
                     </div>
 
                     <p-button type="submit" label="Araç Ekle" icon="pi pi-plus" iconPos="right"

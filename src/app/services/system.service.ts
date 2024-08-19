@@ -4,25 +4,25 @@ import { generateClient } from 'aws-amplify/api';
 @Injectable({
   providedIn: 'root'
 })
-export class SystemService {
+export class PlatformService {
   private client: any;
 
   constructor() {
     this.client = generateClient();
   }
 
-  async listSystems(): Promise<any[]> {
+  async listPlatforms(): Promise<any[]> {
     try {
-      const systems = await this.client.models.System.list();
-      console.log(systems);
-      return systems.data.map((system: { id: any; description: any; }) => ({
-        id: system.id,
-        description: system.description
+      const platforms = await this.client.models.Platform.list();
+      console.log(platforms);
+      return platforms.data.map((platform: { id: any; description: any; }) => ({
+        id: platform.id,
+        description: platform.description
       }));
 
 
     } catch (error) {
-      console.error('Error listing systems:', error);
+      console.error('Error listing platforms:', error);
       throw error;
     }
   }
