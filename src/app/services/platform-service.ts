@@ -38,4 +38,50 @@ export class PlatformService {
       throw error;
     }
   }
+
+  async createPlatform(platformData: {
+    description: string,
+    userID: string,
+    buildings?: string[],
+    vehicles?: string[]
+  }): Promise<any> {
+    try {
+      // Önce platformu oluştur
+      const newPlatform = await this.client.models.Platform.create({
+        description: platformData.description,
+        userID: platformData.userID
+      });
+
+      // Eğer binalar ve araçlar belirtildiyse, bunları platforma bağla
+      if (platformData.buildings && platformData.buildings.length > 0) {
+        await Promise.all(platformData.buildings.map(buildingId =>
+          this.client.models.Building.update({
+            id: buildingId,
+            platformID: newPlatform.id
+          })
+        ));
+      }
+
+      if (platformData.vehicles && platformData.vehicles.length > 0) {
+        await Promise.all(platformData.vehicles.map(vehicleId =>
+          this.client.models.Vehicle.update({
+            id: vehicleId,
+            platformID: newPlatform.id
+          })
+        ));
+      }
+
+      // Oluşturulan platformu döndür
+      return {
+        id: newPlatform.id,
+        description: newPlatform.description,
+        userID: newPlatform.userID,
+        buildingCount: platformData.buildings?.length || 0,
+        vehicleCount: platformData.vehicles?.length || 0
+      };
+    } catch (error) {
+      console.error('Error creating platform:', error);
+      throw error;
+    }
+  }
 }

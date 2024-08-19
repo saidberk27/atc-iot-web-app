@@ -52,7 +52,7 @@ export class UserService {
       console.error('Error clearing email from localStorage:', error);
     }
   }
-
+  //NOTE: Create user DynamoDB'ye kayıt için cognito ID alıyor, kendi otomatik ID'si ile kaydetmiyor, uygulama mimarisi bu şekilde eğer değişirse platformlar listelenemez.
   async createUser(userData: any): Promise<any> {
     try {
       this.userAttributes = await this.authService.getStoredAttributes();

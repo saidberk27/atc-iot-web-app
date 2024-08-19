@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
 
 })
 export class ListPlatformsComponent implements OnInit {
-  userID: string = '';
+  private userID: string = '';
   platforms: any[] = [];
   filteredPlatforms: any[] = [];
   searchTerm: string = '';

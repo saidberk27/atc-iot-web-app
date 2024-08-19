@@ -15,6 +15,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { VehicleService } from '../../services/vehicle.service';
 import { MessageService } from 'primeng/api';
 import { PlatformService } from '../../services/platform-service';
+import { AuthStateService } from '../../services/auth-state.service';
+import { Router } from '@angular/router';
 
 interface PlatformOption {
   id: string;
@@ -42,6 +44,7 @@ interface PlatformOption {
   styleUrl: './add-new-vehicle.component.css'
 })
 export class AddNewVehicleComponent {
+  private userID: string = '';
   vehicleForm: FormGroup;
   platformOptions: PlatformOption[] = [];
 
@@ -49,11 +52,14 @@ export class AddNewVehicleComponent {
     private fb: FormBuilder,
     private vehicleService: VehicleService,
     private platformService: PlatformService,
-    private messageService: MessageService
+    private messageService: MessageService,
+
+    private authService: AuthStateService,
+    private router: Router
   ) {
     this.vehicleForm = this.fb.group({
       vehicleName: ['', [Validators.required, Validators.minLength(3)]],
-      vehiclePlateNumber: ['', [Validators.required, Validators.pattern(/^[A-Z0-9]{1,10}$/)]],
+      vehiclePlateNumber: ['', [Validators.required, Validators.pattern(/^(0[1-9]|[1-7][0-9]|8[01])((\s?[a-zA-Z]\s?)(\d{4,5})|(\s?[a-zA-Z]{2}\s?)(\d{3,4})|(\s?[a-zA-Z]{3}\s?)(\d{2,4}))$/)]],
       vehicleDescription: [''],
       platformID: ['', Validators.required]
     });
@@ -61,12 +67,26 @@ export class AddNewVehicleComponent {
 
   async ngOnInit() {
     try {
-      // FIXME: UserID düzelt
-      this.platformOptions = await this.platformService.listPlatforms("userID");
+      await this.getUserID();
+      this.platformOptions = await this.platformService.listPlatforms(this.userID);
 
     } catch (error) {
       console.error('Error fetching platforms:', error);
       // Burada bir hata mesajı gösterilebilir
+    }
+  }
+
+  async getUserID() {
+    try {
+      const attributes = await this.authService.getStoredAttributes();
+      if (attributes && attributes.sub) {
+        this.userID = attributes.sub;
+        console.log('User ID:', this.userID);
+      } else {
+        console.error('User attributes or sub not found');
+      }
+    } catch (error) {
+      console.error('Error getting stored attributes:', error);
     }
   }
 
@@ -75,14 +95,16 @@ export class AddNewVehicleComponent {
       try {
         const newVehicle = await this.vehicleService.createVehicle(this.vehicleForm.value);
         console.log('New vehicle created:', newVehicle);
-        // Burada başarılı işlem mesajı gösterilebilir
+        this.showSuccessMessage('Yeni araç başarıyla eklendi, yönlendiriliyorsunuz...');
         this.vehicleForm.reset();
+        setTimeout(() => {
+          this.router.navigate(['/araclarim']);
+        }, 2500);
       } catch (error) {
         console.error('Error creating vehicle:', error);
-        // Burada hata mesajı gösterilebilir
+        this.showErrorMessage(this.getErrorMessage(error));
       }
     } else {
-      // Form geçersizse kullanıcıya bilgi ver
       Object.keys(this.vehicleForm.controls).forEach(key => {
         const control = this.vehicleForm.get(key);
         if (control?.invalid) {

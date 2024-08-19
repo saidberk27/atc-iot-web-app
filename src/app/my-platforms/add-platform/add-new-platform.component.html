@@ -1,0 +1,35 @@
+<div class="main-container">
+    <h1 class="panel-title">Yeni Platform Ekle</h1>
+    <div class="options-container">
+        <p-card>
+            <form [formGroup]="platformForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label for="description">Platform Açıklaması</label>
+                        <input id="description" type="text" pInputText formControlName="description"
+                            placeholder="Platform için açıklayıcı bir isim girin">
+                        <p-message severity="error" text="Platform açıklaması en az 3 karakter olmalı"
+                            *ngIf="platformForm.get('description')?.invalid && platformForm.get('description')?.touched"></p-message>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="buildings">Binalar</label>
+                        <p-multiSelect id="buildings" [options]="buildingOptions" formControlName="buildings"
+                            optionLabel="name" placeholder="Binaları Seçin" [showClear]="true"></p-multiSelect>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="vehicles">Araçlar</label>
+                        <p-multiSelect id="vehicles" [options]="vehicleOptions" formControlName="vehicles"
+                            optionLabel="name" placeholder="Araçları Seçin" [showClear]="true"></p-multiSelect>
+                    </div>
+
+                    <p-button type="submit" label="Platform Ekle" icon="pi pi-plus" iconPos="right"
+                        [disabled]="platformForm.invalid"></p-button>
+                </div>
+            </form>
+        </p-card>
+    </div>
+</div>
+
+<p-toast />
