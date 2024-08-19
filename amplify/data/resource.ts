@@ -86,10 +86,8 @@ const schema = a.schema({
     deviceType: a.enum(['GPS', 'TEMPERATURE_HUMIDITY']),
     unitID: a.string().required(),
     unit: a.belongsTo('Unit', 'unitID'),
-    gpsDataID: a.string(),
-    gpsData: a.hasOne('GPSData', 'deviceID'),
-    temperatureHumidityDataID: a.string(),
-    temperatureHumidityData: a.hasOne('TemperatureHumidityData', 'deviceID'),
+
+
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
   }).authorization(allow => [allow.publicApiKey()]),
