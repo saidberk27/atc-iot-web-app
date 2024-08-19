@@ -65,9 +65,18 @@ export class UserService {
         throw new Error('Yalnızca adminler kullanıcı ekleyebilir.');
       }
 
-      await this.signUpUser(userData);
+      // signUpUser fonksiyonundan Cognito ID'yi al
+      const cognitoUser = await this.signUpUser(userData);
+
+      console.log(cognitoUser.userId);
+      const cognitoUserId = cognitoUser.userId; // Cognito'nun döndürdüğü user ID
+
+      if (!cognitoUserId) {
+        throw new Error('Cognito kullanıcı ID alınamadı.');
+      }
 
       const newUser = await this.client.models.User.create({
+        id: cognitoUserId, // Cognito ID'yi User modelinin id'si olarak kullan
         email: userData.email,
         firstName: userData.firstName,
         lastName: userData.lastName,

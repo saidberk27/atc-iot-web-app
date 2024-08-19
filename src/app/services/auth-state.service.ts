@@ -83,8 +83,10 @@ export class AuthStateService {
   public async fetchAndStoreUserAttributes(): Promise<any> {
     try {
       const user = await getCurrentUser();
+
       if (user) {
         const attributes = await fetchUserAttributes();
+
         this.storeAttributes(attributes);
         this.userAttributesSubject.next(attributes);
         return attributes;

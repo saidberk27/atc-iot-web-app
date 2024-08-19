@@ -11,16 +11,28 @@ export class PlatformService {
     this.client = generateClient();
   }
 
-  async listPlatforms(): Promise<any[]> {
+  async listPlatforms(userID: string): Promise<any[]> {
     try {
-      const platforms = await this.client.models.Platform.list();
-      console.log(platforms);
-      return platforms.data.map((platform: { id: any; description: any; }) => ({
-        id: platform.id,
-        description: platform.description
+      console.log(userID);
+      const platforms = await this.client.models.Platform.list({
+        filter: { userID: { eq: userID } }
+      });
+
+      return await Promise.all(platforms.data.map(async (platform: any) => {
+        const buildings = await this.client.models.Building.list({
+          filter: { platformID: { eq: platform.id } }
+        });
+        const vehicles = await this.client.models.Vehicle.list({
+          filter: { platformID: { eq: platform.id } }
+        });
+        return {
+          id: platform.id,
+          description: platform.description,
+          buildingCount: buildings.data.length,
+          vehicleCount: vehicles.data.length,
+          userID: platform.userID
+        };
       }));
-
-
     } catch (error) {
       console.error('Error listing platforms:', error);
       throw error;

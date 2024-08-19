@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.panel-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.search-container {
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+}
+
+.platform-accordion {
+    width: 100%;
+    max-width: 800px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.platform-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.platform-name {
+    font-weight: 600;
+}
+
+.platform-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.platform-details {
+    padding: 10px 0;
+}
+
+.no-platforms {
+    text-align: center;
+    color: #666;
+    margin-top: 20px;
+}
+
+.navigation-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+:host ::ng-deep .p-accordion .p-accordion-header .p-accordion-header-link {
+    background-color: #ffffff;
+    color: #333;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+:host ::ng-deep .p-accordion .p-accordion-content {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 0 0 10px 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.option-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    i {
+        font-size: 2.5rem;
+        color: #3498db;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 0.9rem;
+        color: #666;
+    }
+}

@@ -1,0 +1,63 @@
+<div class="main-container">
+
+
+    <h1 class="panel-title">Platform Listesi</h1>
+
+    <div class="search-container">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText [(ngModel)]="searchTerm" (input)="searchPlatforms()"
+                placeholder="Platform ara...">
+        </span>
+    </div>
+
+    <ng-container *ngIf="!loading; else loadingTemplate">
+        <ng-container *ngIf="filteredPlatforms.length > 0; else noPlatforms">
+            <p-accordion [multiple]="true" class="platform-accordion">
+                <p-accordionTab *ngFor="let platform of filteredPlatforms">
+                    <ng-template pTemplate="header">
+                        <div class="platform-header">
+                            <span class="platform-name">{{ platform.description }}</span>
+                            <div class="platform-actions">
+                                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text"
+                                    (click)="editPlatform(platform, $event)"></button>
+                                <button pButton icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger"
+                                    (click)="deletePlatform(platform, $event)"></button>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div class="platform-details">
+                            <p><strong>Açıklama:</strong> {{ platform.description }}</p>
+                            <p><strong>Bina Sayısı:</strong> {{ platform.buildingCount }}</p>
+                            <p><strong>Araç Sayısı:</strong> {{ platform.vehicleCount }}</p>
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+            </p-accordion>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+        <p>Platformlar yükleniyor...</p>
+    </ng-template>
+
+    <ng-template #noPlatforms>
+        <p class="no-platforms">Henüz hiçbir platform eklememişsiniz. Lütfen bir önceki menüden platform ekleyin.</p>
+    </ng-template>
+
+    <div class="navigation-cards">
+
+        <div class="option-card" (click)="navigateTo('platformlarim')">
+            <i class="pi pi-arrow-circle-left"></i>
+            <h2>Geri Dön</h2>
+            <p>Platformlarıma Geri Dönün</p>
+        </div>
+        <div class="option-card" (click)="navigateTo('ana-sayfa')">
+            <i class="pi pi-home"></i>
+            <h2>Ana Sayfa</h2>
+            <p>Ana Sayfa'ya Geri Dönün</p>
+        </div>
+    </div>
+</div>

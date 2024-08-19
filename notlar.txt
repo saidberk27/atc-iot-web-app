@@ -8,3 +8,5 @@ backend notlar:
 
 - backendde değişiklik yaptıktan sonra angular_outputs.json'u da mutlaka güncelle.
 -main.ts'içinde provideAnimations() mutlaka ekle.
+
+-eğer amplify/data/resource.ts içinde bir modelin adını değiştirdiysen amplify_outputs.json değişmemiş olabiliyor. Benim örneğimde Systems'i Platforms olarak değiştirmeme rağmen Systems olarak kalmıştı ve programın çalışmasına müsaade etmiyordu. Buna Dikkat Et

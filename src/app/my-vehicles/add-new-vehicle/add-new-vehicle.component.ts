@@ -61,7 +61,8 @@ export class AddNewVehicleComponent {
 
   async ngOnInit() {
     try {
-      this.platformOptions = await this.platformService.listPlatforms();
+      // FIXME: UserID düzelt
+      this.platformOptions = await this.platformService.listPlatforms("userID");
 
     } catch (error) {
       console.error('Error fetching platforms:', error);
