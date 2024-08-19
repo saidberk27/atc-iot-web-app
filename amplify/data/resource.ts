@@ -34,6 +34,7 @@ const schema = a.schema({
 
   Platform: a.model({
     id: a.id(),
+    platformName: a.string(),
     description: a.string(),
     userID: a.string().required(),
     user: a.belongsTo('User', 'userID'),
@@ -69,6 +70,7 @@ const schema = a.schema({
 
   Unit: a.model({
     id: a.id(),
+    unitName: a.string(),
     buildingID: a.string(),
     building: a.belongsTo('Building', 'buildingID'),
     vehicleID: a.string(),
@@ -80,6 +82,7 @@ const schema = a.schema({
 
   Device: a.model({
     id: a.id(),
+    deviceName: a.string(),
     deviceType: a.enum(['GPS', 'TEMPERATURE_HUMIDITY']),
     unitID: a.string().required(),
     unit: a.belongsTo('Unit', 'unitID'),
@@ -90,32 +93,8 @@ const schema = a.schema({
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
   }).authorization(allow => [allow.publicApiKey()]),
-
-  GPSData: a.model({
-    id: a.id(),
-    latitude: a.float().required(),
-    longitude: a.float().required(),
-    altitude: a.float(),
-    speed: a.float(),
-    course: a.float(),
-    satellites: a.integer(),
-    hdop: a.float(),
-    deviceID: a.string().required(),
-    device: a.belongsTo('Device', 'deviceID'),
-    createdAt: a.datetime(),
-    updatedAt: a.datetime(),
-  }).authorization(allow => [allow.publicApiKey()]),
-
-  TemperatureHumidityData: a.model({
-    id: a.id(),
-    temperature: a.float().required(),
-    humidity: a.float(),
-    deviceID: a.string().required(),
-    device: a.belongsTo('Device', 'deviceID'),
-    createdAt: a.datetime(),
-    updatedAt: a.datetime(),
-  }).authorization(allow => [allow.publicApiKey()]),
-});
+}
+);
 
 // Used for code completion / highlighting when making requests from frontend
 export type Schema = ClientSchema<typeof schema>;
