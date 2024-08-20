@@ -44,6 +44,7 @@ export class VehicleService {
   // List all vehicles
   async listVehicles(): Promise<any[]> {
     try {
+      console.log('Client models:', this.client.models);
       return await this.client.models.Vehicle.list();
     } catch (error) {
       console.error('Error listing vehicles:', error);
@@ -75,4 +76,7 @@ export class VehicleService {
       throw error;
     }
   }
+
+
 }
+

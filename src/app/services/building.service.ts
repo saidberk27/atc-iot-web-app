@@ -27,17 +27,13 @@ export class BuildingService {
     }
   }
 
-  // Read all buildings
-  async listBuildings(platformID?: string): Promise<any[]> {
+  // List all buildings
+  async listBuildings(): Promise<any[]> {
     try {
-      let filter = {};
-      if (platformID) {
-        filter = { platformID: { eq: platformID } };
-      }
-      const buildings = await this.client.models.Building.list({ filter });
-      return buildings.data;
+
+      return await this.client.models.Building.list();
     } catch (error) {
-      console.error('Error listing buildings:', error);
+      console.error('Error listing vehicles:', error);
       throw error;
     }
   }

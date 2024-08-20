@@ -67,16 +67,19 @@ export class AddNewPlatformComponent implements OnInit {
       buildings: [[]],
       vehicles: [[]]
     });
+
   }
 
   async ngOnInit() {
+
     try {
+
       await this.getUserID();
-      this.buildingOptions = await this.buildingService.listBuildings(this.userID);
+      this.buildingOptions = await this.buildingService.listBuildings();
       this.vehicleOptions = await this.vehicleService.listVehicles();
     } catch (error) {
       console.error('Error fetching options:', error);
-      this.showErrorMessage('Seçenekler yüklenirken bir hata oluştu');
+      this.showErrorMessage('Seçenekler yüklenirken bir hata oluştu lütfen teknik destek talep edin.');
     }
   }
 
