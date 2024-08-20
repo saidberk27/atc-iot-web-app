@@ -27,6 +27,7 @@ export class PlatformService {
         });
         return {
           id: platform.id,
+          platformName: platform.platformName, // Eklendi
           description: platform.description,
           buildingCount: buildings.data.length,
           vehicleCount: vehicles.data.length,
@@ -40,47 +41,44 @@ export class PlatformService {
   }
 
   async createPlatform(platformData: {
+    platformName: string,
     description: string,
     userID: string,
     buildings?: string[],
     vehicles?: string[]
   }): Promise<any> {
     try {
-      // Önce platformu oluştur
+      // Platformu oluştur
       const newPlatform = await this.client.models.Platform.create({
+        platformName: platformData.platformName,
         description: platformData.description,
         userID: platformData.userID
       });
 
-      // Eğer binalar ve araçlar belirtildiyse, bunları platforma bağla
-      if (platformData.buildings && platformData.buildings.length > 0) {
-        await Promise.all(platformData.buildings.map(buildingId =>
-          this.client.models.Building.update({
+      // Yeni oluşturulan platformun ID'sini al
+      const platformID = newPlatform.data.id;
+      // Buildings ve vehicles'ı güncelle
+      if (platformData.buildings) {
+        await Promise.all(platformData.buildings.map(async (buildingId) => {
+          await this.client.models.Building.update({
             id: buildingId,
-            platformID: newPlatform.id
-          })
-        ));
+            platformID: platformID
+          });
+        }));
       }
 
-      if (platformData.vehicles && platformData.vehicles.length > 0) {
-        await Promise.all(platformData.vehicles.map(vehicleId =>
-          this.client.models.Vehicle.update({
+      if (platformData.vehicles) {
+        await Promise.all(platformData.vehicles.map(async (vehicleId) => {
+          await this.client.models.Vehicle.update({
             id: vehicleId,
-            platformID: newPlatform.id
-          })
-        ));
+            platformID: platformID
+          });
+        }));
       }
 
-      // Oluşturulan platformu döndür
-      return {
-        id: newPlatform.id,
-        description: newPlatform.description,
-        userID: newPlatform.userID,
-        buildingCount: platformData.buildings?.length || 0,
-        vehicleCount: platformData.vehicles?.length || 0
-      };
+      return newPlatform;
     } catch (error) {
-      console.error('Error creating platform:', error);
+      console.error("Error creating platform:", error);
       throw error;
     }
   }

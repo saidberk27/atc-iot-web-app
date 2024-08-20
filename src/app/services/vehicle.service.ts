@@ -16,13 +16,15 @@ export class VehicleService {
     vehiclePlateNumber: string;
     vehicleDescription?: string;
     platformID: string;
+    userID: string;
   }): Promise<any> {
     try {
       const newVehicle = await this.client.models.Vehicle.create({
         vehicleName: vehicleData.vehicleName,
         vehiclePlateNumber: vehicleData.vehiclePlateNumber,
         vehicleDescription: vehicleData.vehicleDescription,
-        platformID: vehicleData.platformID
+        platformID: vehicleData.platformID,
+        userID: vehicleData.userID
       });
       return newVehicle;
     } catch (error) {
@@ -44,8 +46,8 @@ export class VehicleService {
   // List all vehicles
   async listVehicles(): Promise<any[]> {
     try {
-      console.log('Client models:', this.client.models);
-      return await this.client.models.Vehicle.list();
+      const response = await this.client.models.Vehicle.list();
+      return response.data;
     } catch (error) {
       console.error('Error listing vehicles:', error);
       throw error;

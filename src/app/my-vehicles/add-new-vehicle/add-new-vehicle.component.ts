@@ -93,7 +93,13 @@ export class AddNewVehicleComponent {
   async onSubmit() {
     if (this.vehicleForm.valid) {
       try {
-        const newVehicle = await this.vehicleService.createVehicle(this.vehicleForm.value);
+        // Form değerlerini al ve userID'yi ekle
+        const vehicleData = {
+          ...this.vehicleForm.value,
+          userID: this.userID
+        };
+
+        const newVehicle = await this.vehicleService.createVehicle(vehicleData);
         console.log('New vehicle created:', newVehicle);
         this.showSuccessMessage('Yeni araç başarıyla eklendi, yönlendiriliyorsunuz...');
         this.vehicleForm.reset();

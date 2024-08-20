@@ -9,7 +9,8 @@ import { CardModule } from 'primeng/card';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 import { PlatformService } from '../../services/platform-service';
 import { BuildingService } from '../../services/building.service';
@@ -41,7 +42,8 @@ interface VehicleOption {
     MessagesModule,
     MessageModule,
     ToastModule,
-    MultiSelectModule
+
+    AutoCompleteModule
   ],
   providers: [MessageService],
   templateUrl: './add-new-platform.component.html',
@@ -53,6 +55,11 @@ export class AddNewPlatformComponent implements OnInit {
   buildingOptions: BuildingOption[] = [];
   vehicleOptions: VehicleOption[] = [];
 
+  selectedBuildings: BuildingOption[] = [];
+  selectedVehicles: VehicleOption[] = [];
+  filteredBuildings: BuildingOption[] = [];
+  filteredVehicles: VehicleOption[] = [];
+
   constructor(
     private fb: FormBuilder,
     private platformService: PlatformService,
@@ -63,7 +70,8 @@ export class AddNewPlatformComponent implements OnInit {
     private router: Router
   ) {
     this.platformForm = this.fb.group({
-      description: ['', [Validators.required, Validators.minLength(3)]],
+      platformName: ['', [Validators.required, Validators.minLength(3)]], // name yerine platformName
+      description: [''],
       buildings: [[]],
       vehicles: [[]]
     });
@@ -71,12 +79,21 @@ export class AddNewPlatformComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     try {
-
       await this.getUserID();
-      this.buildingOptions = await this.buildingService.listBuildings();
-      this.vehicleOptions = await this.vehicleService.listVehicles();
+      const rawVehicles = await this.vehicleService.listVehicles();
+
+      console.log('Raw vehicles data:', rawVehicles);
+
+      // API'den gelen veriyi VehicleOption interface'ine uygun hale getiriyoruz
+      this.vehicleOptions = Array.isArray(rawVehicles)
+        ? rawVehicles.map(vehicle => ({
+          id: vehicle.id,
+          name: vehicle.vehicleName || vehicle.name, // API'den gelen veriye göre ayarlayın
+        }))
+        : [];
+
+      console.log('Processed vehicle options:', this.vehicleOptions);
     } catch (error) {
       console.error('Error fetching options:', error);
       this.showErrorMessage('Seçenekler yüklenirken bir hata oluştu lütfen teknik destek talep edin.');
@@ -88,7 +105,6 @@ export class AddNewPlatformComponent implements OnInit {
       const attributes = await this.authService.getStoredAttributes();
       if (attributes && attributes.sub) {
         this.userID = attributes.sub;
-        console.log('User ID:', this.userID);
       } else {
         console.error('User attributes or sub not found');
       }
@@ -100,29 +116,33 @@ export class AddNewPlatformComponent implements OnInit {
   async onSubmit() {
     if (this.platformForm.valid) {
       try {
+        console.log('Form values:', this.platformForm.value);
+        console.log('Selected buildings:', this.selectedBuildings);
+        console.log('Selected vehicles:', this.selectedVehicles);
+
         const newPlatform = await this.platformService.createPlatform({
-          ...this.platformForm.value,
-          userID: this.userID
+          platformName: this.platformForm.value.platformName,
+          description: this.platformForm.value.description,
+          userID: this.userID,
+          buildings: this.selectedBuildings.map(b => b.id),
+          vehicles: this.selectedVehicles.map(v => v.id)
         });
+
         console.log('New platform created:', newPlatform);
         this.showSuccessMessage('Yeni platform başarıyla eklendi, yönlendiriliyorsunuz...');
         this.platformForm.reset();
         setTimeout(() => {
           this.router.navigate(['/platformlarim']);
-        }, 2500);
+        })
       } catch (error) {
         console.error('Error creating platform:', error);
         this.showErrorMessage(this.getErrorMessage(error));
       }
     } else {
-      Object.keys(this.platformForm.controls).forEach(key => {
-        const control = this.platformForm.get(key);
-        if (control?.invalid) {
-          control.markAsTouched();
-        }
-      });
+      // Form doğrulama hataları
     }
   }
+
 
   showSuccessMessage(message: string) {
     this.messageService.add({
@@ -150,5 +170,54 @@ export class AddNewPlatformComponent implements OnInit {
     } else {
       return 'Bilinmeyen hata';
     }
+  }
+
+  filterBuildings(event: { query: string }) {
+    const query = event.query.toLowerCase();
+    this.filteredBuildings = this.buildingOptions && Array.isArray(this.buildingOptions)
+      ? this.buildingOptions.filter(building =>
+        building.name.toLowerCase().includes(query)
+      )
+      : [];
+  }
+
+  filterVehicles(event: { query: string }) {
+    const query = event.query.toLowerCase();
+    console.log('Vehicle options:', this.vehicleOptions);
+
+    this.filteredVehicles = this.vehicleOptions && Array.isArray(this.vehicleOptions)
+      ? this.vehicleOptions.filter(vehicle =>
+        vehicle && vehicle.name && // null check
+        vehicle.name.toLowerCase().includes(query)
+      )
+      : [];
+
+    console.log('Filtered vehicles:', this.filteredVehicles);
+  }
+
+  onBuildingSelect(event: AutoCompleteSelectEvent) {
+    const building = event.value as BuildingOption;
+    if (!this.selectedBuildings.some(b => b.id === building.id)) {
+      this.selectedBuildings.push(building);
+      console.log('Selected buildings updated:', this.selectedBuildings);
+    }
+  }
+
+  onVehicleSelect(event: AutoCompleteSelectEvent) {
+    const vehicle = event.value as VehicleOption;
+    if (!this.selectedVehicles.some(v => v.id === vehicle.id)) {
+      this.selectedVehicles.push(vehicle);
+      console.log('Selected vehicles updated:', this.selectedVehicles);
+    }
+  }
+
+  removeBuilding(building: BuildingOption) {
+    this.selectedBuildings = this.selectedBuildings.filter(b => b.id !== building.id);
+    console.log('Building removed, updated list:', this.selectedBuildings);
+  }
+
+  removeVehicle(vehicle: VehicleOption) {
+    this.selectedVehicles = this.selectedVehicles.filter(v => v.id !== vehicle.id);
+    console.log('Vehicle removed, updated list:', this.selectedVehicles);
   }
 }

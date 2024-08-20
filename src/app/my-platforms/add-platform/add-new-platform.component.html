@@ -5,23 +5,45 @@
             <form [formGroup]="platformForm" (ngSubmit)="onSubmit()">
                 <div class="p-fluid">
                     <div class="p-field">
-                        <label for="description">Platform Açıklaması</label>
-                        <input id="description" type="text" pInputText formControlName="description"
-                            placeholder="Platform için açıklayıcı bir isim girin">
-                        <p-message severity="error" text="Platform açıklaması en az 3 karakter olmalı"
-                            *ngIf="platformForm.get('description')?.invalid && platformForm.get('description')?.touched"></p-message>
+                        <label for="platformName">Platform Adı</label>
+                        <input id="platformName" type="text" pInputText formControlName="platformName"
+                            placeholder="Platform adını girin">
+                        <p-message severity="error" text="Platform adı en az 3 karakter olmalı"
+                            *ngIf="platformForm.get('platformName')?.invalid && platformForm.get('platformName')?.touched"></p-message>
                     </div>
 
                     <div class="p-field">
+                        <label for="description">Platform Açıklaması</label>
+                        <input id="description" type="text" pInputText formControlName="description"
+                            placeholder="Platform için açıklayıcı bir metin girin">
+
+
+                        <p-message severity="error" text="Platform açıklaması en az 3 karakter olmalı"
+                            *ngIf="platformForm.get('description')?.invalid && platformForm.get('description')?.touched"></p-message>
+                    </div>
+                    <div class="p-field">
                         <label for="buildings">Binalar</label>
-                        <p-multiSelect id="buildings" [options]="buildingOptions" formControlName="buildings"
-                            optionLabel="name" placeholder="Binaları Seçin" [showClear]="true"></p-multiSelect>
+                        <p-autoComplete [(ngModel)]="selectedBuildings" [suggestions]="filteredBuildings"
+                            (completeMethod)="filterBuildings($event)" field="name" [multiple]="true" [dropdown]="true"
+                            (onSelect)="onBuildingSelect($event)" [forceSelection]="true"
+                            [formControlName]="'buildings'">
+                            <ng-template let-building pTemplate="item">
+                                <div>{{building.name}}</div>
+                            </ng-template>
+                        </p-autoComplete>
+
                     </div>
 
                     <div class="p-field">
                         <label for="vehicles">Araçlar</label>
-                        <p-multiSelect id="vehicles" [options]="vehicleOptions" formControlName="vehicles"
-                            optionLabel="name" placeholder="Araçları Seçin" [showClear]="true"></p-multiSelect>
+                        <p-autoComplete [(ngModel)]="selectedVehicles" [suggestions]="filteredVehicles"
+                            (completeMethod)="filterVehicles($event)" field="name" [multiple]="true" [dropdown]="true"
+                            (onSelect)="onVehicleSelect($event)" [forceSelection]="true" [formControlName]="'vehicles'">
+                            <ng-template let-vehicle pTemplate="item">
+                                <div>{{vehicle.name}}</div>
+                            </ng-template>
+                        </p-autoComplete>
+
                     </div>
 
                     <p-button type="submit" label="Platform Ekle" icon="pi pi-plus" iconPos="right"
@@ -31,5 +53,3 @@
         </p-card>
     </div>
 </div>
-
-<p-toast />

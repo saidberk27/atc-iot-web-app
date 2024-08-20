@@ -30,12 +30,15 @@ export class BuildingService {
   // List all buildings
   async listBuildings(): Promise<any[]> {
     try {
-
-      return await this.client.models.Building.list();
+      const response = await this.client.models.Building.list();
+      return response.data;
     } catch (error) {
       console.error('Error listing vehicles:', error);
       throw error;
+
+
     }
+
   }
 
   // Read a single building by ID

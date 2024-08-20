@@ -67,13 +67,10 @@ const schema = a.schema({
     vehicleDescription: a.string(),
     userID: a.string().required(),
     user: a.belongsTo('User', 'userID'),
-    platformID: a.string().required(),
-    platform: a.belongsTo('Platform', 'platformID'),
-    units: a.hasMany('Unit', 'vehicleID'),
+    platforms: a.hasMany('Platform', 'vehicleID'),
     createdAt: a.datetime(),
     updatedAt: a.datetime(),
   }).authorization(allow => [allow.publicApiKey()]),
-
   Unit: a.model({
     id: a.id(),
     unitName: a.string(),
