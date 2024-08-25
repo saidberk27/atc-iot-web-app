@@ -11,11 +11,12 @@
     <ng-container *ngIf="!loading; else loadingTemplate">
         <ng-container *ngIf="filteredVehicles.length > 0; else noVehicles">
             <div class="vehicle-list">
-                <p-card *ngFor="let vehicle of filteredVehicles" [header]="vehicle.name" [subheader]="vehicle.type">
+                <p-card *ngFor="let vehicle of filteredVehicles" [header]="vehicle.vehicleName"
+                    [subheader]="vehicle.type">
                     <ng-template pTemplate="content">
-                        <p><strong>Plaka:</strong> {{ vehicle.licensePlate }}</p>
-                        <p><strong>Model:</strong> {{ vehicle.model }}</p>
-                        <p><strong>Yıl:</strong> {{ vehicle.year }}</p>
+                        <p><strong>Plaka:</strong> {{ vehicle.plateNumber }}</p>
+                        <p><strong>Açıklama:</strong> {{ vehicle.description }}</p>
+                        <p><strong>Eklenme Tarihi:</strong> {{ vehicle.createdAt | turkishDate }}</p>
                     </ng-template>
                 </p-card>
             </div>
@@ -31,7 +32,7 @@
     </ng-template>
 
     <div class="navigation-cards">
-        <div class="option-card" (click)="navigateTo('platformlarim')">
+        <div class="option-card" (click)="navigateTo('platformlari-listele')">
             <i class="pi pi-arrow-circle-left"></i>
             <h2>Geri Dön</h2>
             <p>Platform Listesine Geri Dönün</p>

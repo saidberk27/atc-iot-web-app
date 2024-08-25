@@ -6,16 +6,17 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { VehicleService } from '../../../services/vehicle.service'; // Assume this service exists
+import { TurkishDatePipe } from '../../../pipes/turkish-date.pipe';
 
 @Component({
   selector: 'app-platform-vehicle',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, CardModule],
+  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, CardModule, TurkishDatePipe],
   templateUrl: './platform-vehicle.component.html',
   styleUrls: ['./platform-vehicle.component.css']
 })
 export class PlatformVehicleComponent implements OnInit {
-  platformId: string = '';
+  platformID: string = '';
   vehicles: any[] = [];
   filteredVehicles: any[] = [];
   searchTerm: string = '';
@@ -29,15 +30,18 @@ export class PlatformVehicleComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.platformId = params['id'];
+
+      this.platformID = params['platformID'];
       this.loadVehicles();
     });
   }
 
   async loadVehicles() {
     try {
-      this.vehicles = await this.vehicleService.listVehicles({ platformID: this.platformId });
+
+      this.vehicles = await this.vehicleService.listVehicles({ platformID: this.platformID });
       this.filteredVehicles = [...this.vehicles];
+      console.log(this.filteredVehicles);
       this.loading = false;
     } catch (error) {
       console.error('Error loading vehicles:', error);

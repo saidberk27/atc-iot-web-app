@@ -11,15 +11,21 @@ export class BuildingService {
     this.client = generateClient();
   }
 
-  // Create a new building
   async createBuilding(buildingData: {
-    buildingName: string,
-    buildingDescription?: string,
-    buildingAddress: string,
-    platformID: string
+    buildingName: string;
+    buildingAddress: string;
+    buildingDescription?: string;
+    platformID: string;
+    userID: string;
   }): Promise<any> {
     try {
-      const newBuilding = await this.client.models.Building.create(buildingData);
+      const newBuilding = await this.client.models.Building.create({
+        buildingName: buildingData.buildingName,
+        buildingAddress: buildingData.buildingAddress,
+        buildingDescription: buildingData.buildingDescription,
+        platformID: buildingData.platformID,
+        userID: buildingData.userID
+      });
       return newBuilding;
     } catch (error) {
       console.error('Error creating building:', error);
@@ -27,59 +33,48 @@ export class BuildingService {
     }
   }
 
-  // List all buildings
-  async listBuildings(): Promise<any[]> {
-    try {
-      const response = await this.client.models.Building.list();
-      return response.data;
-    } catch (error) {
-      console.error('Error listing vehicles:', error);
-      throw error;
-
-
-    }
-
-  }
-
-  // Read a single building by ID
   async getBuilding(id: string): Promise<any> {
     try {
-      const building = await this.client.models.Building.get({ id });
-      return building;
+      return await this.client.models.Building.get(id);
     } catch (error) {
       console.error('Error getting building:', error);
       throw error;
     }
   }
 
-  // Update a building
-  async updateBuilding(buildingData: {
-    id: string,
-    buildingName?: string,
-    buildingDescription?: string,
-    buildingAddress?: string,
-    platformID?: string
-  }): Promise<any> {
+  async listBuildings(): Promise<any[]> {
     try {
-      const updatedBuilding = await this.client.models.Building.update(buildingData);
-      return updatedBuilding;
+      const response = await this.client.models.Building.list();
+      return response.data;
+    } catch (error) {
+      console.error('Error listing buildings:', error);
+      throw error;
+    }
+  }
+
+  async updateBuilding(id: string, buildingData: any): Promise<any> {
+    try {
+      const existingBuilding = await this.client.models.Building.get(id);
+      return await this.client.models.Building.update({
+        ...existingBuilding,
+        ...buildingData
+      });
     } catch (error) {
       console.error('Error updating building:', error);
       throw error;
     }
   }
 
-  // Delete a building
-  async deleteBuilding(id: string): Promise<void> {
+  async deleteBuilding(id: string): Promise<any> {
     try {
-      await this.client.models.Building.delete({ id });
+      const buildingToDelete = await this.client.models.Building.get(id);
+      return await this.client.models.Building.delete(buildingToDelete);
     } catch (error) {
       console.error('Error deleting building:', error);
       throw error;
     }
   }
 
-  // Get units for a building
   async getBuildingUnits(buildingID: string): Promise<any[]> {
     try {
       const units = await this.client.models.Unit.list({

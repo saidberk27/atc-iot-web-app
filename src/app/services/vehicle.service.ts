@@ -44,16 +44,51 @@ export class VehicleService {
   }
 
   // List all vehicles
-  async listVehicles(): Promise<any[]> {
+  async listVehicles({ platformID, userID }: { platformID?: string; userID?: string } = {}): Promise<any[]> {
     try {
-      const response = await this.client.models.Vehicle.list();
-      return response.data;
+      //TODO Araclarda niye Unit Kismi var? islevsel hale getir.
+      let filter: any = {};
+
+      if (platformID) {
+        filter.platformID = { eq: platformID };
+        console.log("Platform ID used.")
+      }
+
+      if (userID) {
+        filter.userID = { eq: userID };
+        console.log("user ID used.")
+
+      }
+
+      // If both are provided, we'll use 'and' condition
+      if (platformID && userID) {
+        console.log("both ID used.")
+        filter = {
+          and: [
+            { platformID: { eq: platformID } },
+            { userID: { eq: userID } }
+          ]
+        };
+      }
+      console.log(filter);
+
+      const vehicles = await this.client.models.Vehicle.list({ filter });
+      console.log(vehicles);
+      return vehicles.data.map((vehicle: any) => ({
+        id: vehicle.id,
+        vehicleName: vehicle.vehicleName,
+        description: vehicle.vehicleDescription,
+        plateNumber: vehicle.vehiclePlateNumber,
+        platformID: vehicle.platformID,
+        userID: vehicle.userID,
+        createdAt: vehicle.createdAt
+      }));
+
     } catch (error) {
       console.error('Error listing vehicles:', error);
       throw error;
     }
   }
-
   // Update a vehicle
   async updateVehicle(id: string, vehicleData: any): Promise<any> {
     try {

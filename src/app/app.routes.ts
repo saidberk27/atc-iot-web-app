@@ -16,6 +16,9 @@ import { AddNewVehicleComponent } from './my-vehicles/add-new-vehicle/add-new-ve
 import { IoTMessagesTableComponent } from './api-test-component/api-test-component.component';
 import { ListPlatformsComponent } from './my-platforms/list-platforms/list-platforms.component';
 import { AddNewPlatformComponent } from './my-platforms/add-platform/add-platform.component';
+import { AddNewBuildingComponent } from './my-buildings/add-new-building/add-new-building.component';
+import { PlatformBuildingComponent } from './my-platforms/list-platforms/platform-building/platform-building.component';
+import { PlatformVehicleComponent } from './my-platforms/list-platforms/platform-vehicle/platform-vehicle.component';
 
 
 export const routes: Routes = [
@@ -54,6 +57,16 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
+        path: 'platform-bina',
+        component: PlatformBuildingComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'platform-arac/:platformID',
+        component: PlatformVehicleComponent,
+        canActivate: [authGuard]
+    },
+    {
         path: 'araclarim',
         component: MyVehiclesComponent,
         canActivate: [authGuard]
@@ -70,7 +83,7 @@ export const routes: Routes = [
     },
     {
         path: 'yeni-bina-ekle',
-        component: MyBuildingsComponent,
+        component: AddNewBuildingComponent,
         canActivate: [authGuard]
     },
     {
