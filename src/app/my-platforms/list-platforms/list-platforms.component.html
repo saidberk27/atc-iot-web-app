@@ -32,6 +32,13 @@
                             <p><strong>Açıklama:</strong> {{ platform.description }}</p>
                             <p><strong>Bina Sayısı:</strong> {{ platform.buildingCount }}</p>
                             <p><strong>Araç Sayısı:</strong> {{ platform.vehicleCount }}</p>
+
+                            <div class="platform-buttons">
+                                <button pButton label="Binalar" icon="pi pi-building" class="p-button-primary"
+                                    (click)="navigateToBuildings(platform)"></button>
+                                <button pButton label="Araçlar" icon="pi pi-car" class="p-button-secondary"
+                                    (click)="navigateToVehicles(platform)"></button>
+                            </div>
                         </div>
                     </ng-template>
                 </p-accordionTab>

@@ -122,3 +122,33 @@
         color: #666;
     }
 }
+
+:host ::ng-deep .p-accordion .p-accordion-header .p-accordion-header-link {
+    cursor: pointer;
+}
+
+.platform-header,
+.platform-details {
+    cursor: pointer;
+}
+
+.platform-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.platform-actions .pi-arrow-right {
+    font-size: 1rem;
+    color: #3498db;
+}
+
+.platform-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.platform-buttons button {
+    width: 45%;
+}

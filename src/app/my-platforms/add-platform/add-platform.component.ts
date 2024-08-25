@@ -81,9 +81,8 @@ export class AddNewPlatformComponent implements OnInit {
   async ngOnInit() {
     try {
       await this.getUserID();
-      const rawVehicles = await this.vehicleService.listVehicles();
+      const rawVehicles = await this.vehicleService.listVehicles({ userID: this.userID });
 
-      console.log('Raw vehicles data:', rawVehicles);
 
       // API'den gelen veriyi VehicleOption interface'ine uygun hale getiriyoruz
       this.vehicleOptions = Array.isArray(rawVehicles)
@@ -93,7 +92,6 @@ export class AddNewPlatformComponent implements OnInit {
         }))
         : [];
 
-      console.log('Processed vehicle options:', this.vehicleOptions);
     } catch (error) {
       console.error('Error fetching options:', error);
       this.showErrorMessage('Seçenekler yüklenirken bir hata oluştu lütfen teknik destek talep edin.');
@@ -116,9 +114,7 @@ export class AddNewPlatformComponent implements OnInit {
   async onSubmit() {
     if (this.platformForm.valid) {
       try {
-        console.log('Form values:', this.platformForm.value);
-        console.log('Selected buildings:', this.selectedBuildings);
-        console.log('Selected vehicles:', this.selectedVehicles);
+
 
         const newPlatform = await this.platformService.createPlatform({
           platformName: this.platformForm.value.platformName,
@@ -192,7 +188,7 @@ export class AddNewPlatformComponent implements OnInit {
       )
       : [];
 
-    console.log('Filtered vehicles:', this.filteredVehicles);
+
   }
 
   onBuildingSelect(event: AutoCompleteSelectEvent) {

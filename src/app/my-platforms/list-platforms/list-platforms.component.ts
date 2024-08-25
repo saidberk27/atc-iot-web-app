@@ -89,4 +89,12 @@ export class ListPlatformsComponent implements OnInit {
   navigateTo(route: string) {
     this.router.navigate([route]);
   }
+
+  navigateToBuildings(platform: any) {
+    this.router.navigate(['/platform-bina', platform.id]);
+  }
+
+  navigateToVehicles(platform: any) {
+    this.router.navigate(['/platform-arac', platform.id]);
+  }
 }

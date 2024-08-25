@@ -1,0 +1,45 @@
+<div class="main-container">
+    <h1 class="panel-title">Platform Araçları</h1>
+
+    <div class="search-container">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText [(ngModel)]="searchTerm" (input)="searchVehicles()" placeholder="Araç ara...">
+        </span>
+    </div>
+
+    <ng-container *ngIf="!loading; else loadingTemplate">
+        <ng-container *ngIf="filteredVehicles.length > 0; else noVehicles">
+            <div class="vehicle-list">
+                <p-card *ngFor="let vehicle of filteredVehicles" [header]="vehicle.name" [subheader]="vehicle.type">
+                    <ng-template pTemplate="content">
+                        <p><strong>Plaka:</strong> {{ vehicle.licensePlate }}</p>
+                        <p><strong>Model:</strong> {{ vehicle.model }}</p>
+                        <p><strong>Yıl:</strong> {{ vehicle.year }}</p>
+                    </ng-template>
+                </p-card>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+        <p>Araçlar yükleniyor...</p>
+    </ng-template>
+
+    <ng-template #noVehicles>
+        <p class="no-vehicles">Bu platforma ait araç bulunmamaktadır.</p>
+    </ng-template>
+
+    <div class="navigation-cards">
+        <div class="option-card" (click)="navigateTo('platformlarim')">
+            <i class="pi pi-arrow-circle-left"></i>
+            <h2>Geri Dön</h2>
+            <p>Platform Listesine Geri Dönün</p>
+        </div>
+        <div class="option-card" (click)="navigateTo('ana-sayfa')">
+            <i class="pi pi-home"></i>
+            <h2>Ana Sayfa</h2>
+            <p>Ana Sayfa'ya Geri Dönün</p>
+        </div>
+    </div>
+</div>
