@@ -1,0 +1,46 @@
+<div class="main-container">
+    <h1 class="panel-title">Yeni Bina Ekle</h1>
+    <div class="options-container">
+        <p-card>
+            <form [formGroup]="buildingForm" (ngSubmit)="onSubmit()">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label for="buildingName">Bina İsmi</label>
+                        <input id="buildingName" type="text" pInputText formControlName="buildingName"
+                            placeholder="Tanımanızı kolayaştıracak bir isim girin">
+                        <p-message severity="error" text="Bina ismi en az 3 karakter olmalı"
+                            *ngIf="buildingForm.get('buildingName')?.invalid && buildingForm.get('buildingName')?.touched"></p-message>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="buildingAddress">Adres</label>
+                        <input id="buildingAddress" type="text" pInputText formControlName="buildingAddress"
+                            placeholder="Adresinizi Eksiksiz Giriniz">
+                        <p-message severity="error" text="Lütfen Geçerli Bir Adres Giriniz"
+                            *ngIf="buildingForm.get('buildingAddress')?.invalid && buildingForm.get('buildingAddress')?.touched"></p-message>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="buildingDescription">Açıklama (İsteğe Bağlı)</label>
+                        <textarea id="buildingDescription" pInputTextarea formControlName="buildingDescription"
+                            placeholder="Aracınızı tanımanızı kolayaştıracak bir açıklama girin"></textarea>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="platform">Ait Olduğu Platform</label>
+                        <p-dropdown id="platform" [options]="platformOptions" formControlName="platformID"
+                            optionLabel="description" optionValue="id" placeholder="Platform Seçin"
+                            [showClear]="true"></p-dropdown>
+                        <p-message severity="error" text="Arac Hangi Platforma Ekleyeceğinizi Seçmelisiniz"
+                            *ngIf="buildingForm.get('platformID')?.invalid && buildingForm.get('platformID')?.touched"></p-message>
+                    </div>
+
+                    <p-button type="submit" label="Bina Ekle" icon="pi pi-plus" iconPos="right"
+                        [disabled]="buildingForm.invalid"></p-button>
+                </div>
+            </form>
+        </p-card>
+    </div>
+</div>
+
+<p-toast />
