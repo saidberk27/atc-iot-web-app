@@ -39,7 +39,6 @@ export const handler = async (event: AppSyncResolverEvent<{
   const params = {
     TableName: tableName,
     IndexName: 'DateTimeIndex',
-    KeyConditionExpression: 'dateKey = :dateKey AND #timestamp BETWEEN :startTime AND :endTime',
     ExpressionAttributeNames: {
       '#timestamp': 'timestamp'
     },
