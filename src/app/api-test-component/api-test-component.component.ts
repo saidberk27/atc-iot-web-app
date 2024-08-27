@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
-import { interval, Subscription } from 'rxjs';
-import { startWith, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
 
 interface IoTMessage {
   payload: string;
@@ -11,70 +13,59 @@ interface IoTMessage {
   timestamp: number;
 }
 
+interface TimeFrame {
+  name: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-iot-messages-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, DropdownModule, TableModule],
   template: `
-    <table>
-      <thead>
-        <tr>
-          <th>Timestamp</th>
-          <th>Message ID</th>
-          <th>Payload</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let message of sortedMessages">
-          <td>{{ formatTimestamp(message.timestamp) }}</td>
-          <td>{{ message.messageId }}</td>
-          <td>{{ message.payload }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div>
+      <p-dropdown [options]="timeFrames" [(ngModel)]="selectedTimeFrame" 
+                  optionLabel="name" (onChange)="onTimeFrameChange()"></p-dropdown>
+      
+      <p-table [value]="messages" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Timestamp</th>
+            <th>Message ID</th>
+            <th>Payload</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-message>
+          <tr>
+            <td>{{ formatTimestamp(message.timestamp) }}</td>
+            <td>{{ message.messageId }}</td>
+            <td>{{ message.payload }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   `,
   styles: [`
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
+    :host ::ng-deep .p-dropdown {
+      margin-bottom: 1rem;
     }
   `]
 })
 export class IoTMessagesTableComponent implements OnInit, OnDestroy {
   messages: IoTMessage[] = [];
-  sortedMessages: IoTMessage[] = [];
-  private subscription: Subscription;
+  private subscription: Subscription | null = null;
 
-  constructor() {
-    this.subscription = new Subscription();
-  }
+  timeFrames: TimeFrame[] = [
+    { name: 'Last Hour', value: 'HOUR' },
+    { name: 'Last Day', value: 'DAY' },
+    { name: 'Last Week', value: 'WEEK' }
+  ];
+  selectedTimeFrame: TimeFrame = this.timeFrames[0];
+
+  constructor() { }
 
   ngOnInit() {
-    const client = generateClient<Schema>();
-
-    this.subscription = interval(200).pipe(  // Her 5 saniyede bir sorgu yap
-      startWith(0),
-      switchMap(() => client.queries.getIoTMessages({ TableName: "IoTMessages" }))
-    ).subscribe({
-      next: (response) => {
-        if (response.data) {
-          const newMessages = this.cleanData(JSON.parse(response.data));
-          if (this.hasNewMessages(newMessages)) {
-            this.messages = newMessages;
-            this.sortAndFilterMessages();
-          }
-        }
-      },
-      error: (error) => console.error('Error fetching data:', error)
-    });
+    this.fetchMessages();
   }
 
   ngOnDestroy() {
@@ -83,23 +74,35 @@ export class IoTMessagesTableComponent implements OnInit, OnDestroy {
     }
   }
 
+  onTimeFrameChange() {
+    this.fetchMessages();
+  }
+
+  async fetchMessages() {
+    const client = generateClient<Schema>();
+    try {
+      console.log("deneme");
+
+      const response = await client.queries.getIoTMessages({
+        TableName: "IoTMessages",
+        TimeFrame: this.selectedTimeFrame.value
+      });
+      console.log(response);
+      if (response.data) {
+        console.log(response.data);
+        this.messages = this.cleanData(JSON.parse(response.data));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   cleanData(data: any[]): IoTMessage[] {
     return data.map(item => ({
       payload: item.payload,
-      messageId: item['messageId '].trim(),
-      timestamp: item['timestamp ']
-    }));
-  }
-
-  hasNewMessages(newMessages: IoTMessage[]): boolean {
-    if (newMessages.length !== this.messages.length) return true;
-    return JSON.stringify(newMessages) !== JSON.stringify(this.messages);
-  }
-
-  sortAndFilterMessages() {
-    this.sortedMessages = this.messages
-      .filter(message => message.timestamp !== 0 && message.timestamp !== undefined)
-      .sort((a, b) => b.timestamp - a.timestamp);
+      messageId: item.messageId.trim(),
+      timestamp: item.timestamp
+    })).sort((a, b) => b.timestamp - a.timestamp); // Sunucudan gelen verileri tarihe göre sırala
   }
 
   formatTimestamp(timestamp: number): string {

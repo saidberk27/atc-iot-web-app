@@ -4,13 +4,16 @@ import { getIoTMessages } from '../functions/get_iot_messages/resource';
 
 const schema = a.schema({
 
+
   getIoTMessages: a
     .query()
     .arguments({
-      TableName: a.string()
+      TableName: a.string(),
+      TimeFrame: a.string()
     })
     .returns(a.string())
-    .handler(a.handler.function(getIoTMessages)).authorization(allow => [allow.publicApiKey()]),
+    .handler(a.handler.function(getIoTMessages))
+    .authorization(allow => [allow.publicApiKey()]),
 
   sayHello: a
     .query()
