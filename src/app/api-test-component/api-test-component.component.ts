@@ -56,6 +56,7 @@ export class IoTMessagesTableComponent implements OnInit, OnDestroy {
   private subscription: Subscription | null = null;
 
   timeFrames: TimeFrame[] = [
+    { name: 'Last Minute', value: 'MINUTE' },
     { name: 'Last Hour', value: 'HOUR' },
     { name: 'Last Day', value: 'DAY' },
     { name: 'Last Week', value: 'WEEK' }
@@ -81,7 +82,7 @@ export class IoTMessagesTableComponent implements OnInit, OnDestroy {
   async fetchMessages() {
     const client = generateClient<Schema>();
     try {
-      console.log("deneme");
+      console.log(this.selectedTimeFrame.value);
 
       const response = await client.queries.getIoTMessages({
         TableName: "IoTMessages",
