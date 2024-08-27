@@ -8,7 +8,7 @@ export const handler = async (event: AppSyncResolverEvent<{
   TimeFrame: 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK',
   EndTime?: number
 }>): Promise<string | null> => {
-  const tableName = event.arguments.TableName || 'IoTMessages';
+  const tableName = event.arguments.TableName || 'IoTMessages2';
   const timeFrame = event.arguments.TimeFrame;
   const endTime = event.arguments.EndTime || Date.now();
 
@@ -41,7 +41,7 @@ export const handler = async (event: AppSyncResolverEvent<{
     IndexName: 'DateTimeIndex',
     KeyConditionExpression: 'dateKey = :dateKey AND #timestamp BETWEEN :startTime AND :endTime',
     ExpressionAttributeNames: {
-      '#timestamp ': 'timestamp'
+      '#timestamp': 'timestamp'
     },
     ExpressionAttributeValues: {
       ':dateKey': dateKey,
