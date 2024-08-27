@@ -87,7 +87,7 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
-        path: 'api_test',
+        path: 'api-test',
         component: IoTMessagesTableComponent
     },
     { path: '**', redirectTo: '' }
