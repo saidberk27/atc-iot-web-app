@@ -13,24 +13,19 @@ export const handler = async (event: AppSyncResolverEvent<{
   const endTime = event.arguments.EndTime || Date.now();
 
   let startTime: number;
-  let dateKey: string;
 
   switch (timeFrame) {
     case 'MINUTE':
-      startTime = endTime - 60 * 1000;
-      dateKey = new Date(endTime).toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm
+      startTime = endTime - 60 * 1000; // 1 minute ago
       break;
     case 'HOUR':
-      startTime = endTime - 60 * 60 * 1000;
-      dateKey = new Date(endTime).toISOString().slice(0, 13); // YYYY-MM-DDTHH
+      startTime = endTime - 60 * 60 * 1000; // 1 hour ago
       break;
     case 'DAY':
-      startTime = endTime - 24 * 60 * 60 * 1000;
-      dateKey = new Date(endTime).toISOString().slice(0, 10); // YYYY-MM-DD
+      startTime = endTime - 24 * 60 * 60 * 1000; // 24 hours ago
       break;
     case 'WEEK':
-      startTime = endTime - 7 * 24 * 60 * 60 * 1000;
-      dateKey = new Date(endTime).toISOString().slice(0, 10); // YYYY-MM-DD (week's end date)
+      startTime = endTime - 7 * 24 * 60 * 60 * 1000; // 7 days ago
       break;
     default:
       throw new Error('Invalid TimeFrame');
@@ -38,19 +33,18 @@ export const handler = async (event: AppSyncResolverEvent<{
 
   const params = {
     TableName: tableName,
-    IndexName: 'DateTimeIndex',
+    FilterExpression: '#timestamp BETWEEN :startTime AND :endTime',
     ExpressionAttributeNames: {
       '#timestamp': 'timestamp'
     },
     ExpressionAttributeValues: {
-      ':dateKey': dateKey,
       ':startTime': startTime,
       ':endTime': endTime
     }
   };
 
   try {
-    const result = await dynamodb.query(params).promise();
+    const result = await dynamodb.scan(params).promise();
     console.log(`Retrieved ${result.Items?.length} items`);
     return JSON.stringify(result.Items);
   } catch (error) {
