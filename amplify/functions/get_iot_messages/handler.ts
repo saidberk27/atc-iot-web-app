@@ -1,3 +1,5 @@
+//TODO scan() yerine query() ekle.
+
 import { DynamoDB } from 'aws-sdk';
 import type { AppSyncResolverEvent } from 'aws-lambda';
 

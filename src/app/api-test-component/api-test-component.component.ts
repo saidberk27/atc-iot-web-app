@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 
@@ -30,9 +30,9 @@ interface TimeFrame {
       <p-table [value]="messages" [paginator]="true" [rows]="10">
         <ng-template pTemplate="header">
           <tr>
-            <th>Timestamp</th>
-            <th>Message ID</th>
-            <th>Payload</th>
+            <th>Tarih</th>
+            <th>Mesaj Kimlik Numarası</th>
+            <th>Mesaj İçeriği</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-message>
@@ -56,23 +56,29 @@ export class IoTMessagesTableComponent implements OnInit, OnDestroy {
   private subscription: Subscription | null = null;
 
   timeFrames: TimeFrame[] = [
-    { name: 'Last Minute', value: 'MINUTE' },
-    { name: 'Last Hour', value: 'HOUR' },
-    { name: 'Last Day', value: 'DAY' },
-    { name: 'Last Week', value: 'WEEK' }
+    { name: 'Son 1 Dakika', value: 'MINUTE' },
+    { name: 'Son 1 Saat', value: 'HOUR' },
+    { name: 'Son 1 Gün', value: 'DAY' },
+    { name: 'Son 1 Hafta', value: 'WEEK' }
   ];
   selectedTimeFrame: TimeFrame = this.timeFrames[0];
 
   constructor() { }
 
   ngOnInit() {
-    this.fetchMessages();
+    this.startRealTimeUpdates();
   }
 
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  startRealTimeUpdates() {
+    this.subscription = interval(100).subscribe(() => {
+      this.fetchMessages();
+    });
   }
 
   onTimeFrameChange() {
@@ -82,15 +88,11 @@ export class IoTMessagesTableComponent implements OnInit, OnDestroy {
   async fetchMessages() {
     const client = generateClient<Schema>();
     try {
-      console.log(this.selectedTimeFrame.value);
-
       const response = await client.queries.getIoTMessages({
-        TableName: "IoTMessages",
+        TableName: "IoTMessages2",
         TimeFrame: this.selectedTimeFrame.value
       });
-      console.log(response);
       if (response.data) {
-        console.log(response.data);
         this.messages = this.cleanData(JSON.parse(response.data));
       }
     } catch (error) {
@@ -103,7 +105,7 @@ export class IoTMessagesTableComponent implements OnInit, OnDestroy {
       payload: item.payload,
       messageId: item.messageId.trim(),
       timestamp: item.timestamp
-    })).sort((a, b) => b.timestamp - a.timestamp); // Sunucudan gelen verileri tarihe göre sırala
+    })).sort((a, b) => b.timestamp - a.timestamp);
   }
 
   formatTimestamp(timestamp: number): string {
