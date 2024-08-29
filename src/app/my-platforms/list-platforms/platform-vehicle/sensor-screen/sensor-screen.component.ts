@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Map, View } from 'ol';
@@ -8,8 +8,8 @@ import { fromLonLat } from 'ol/proj';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { Vector as VectorLayer } from 'ol/layer';
-import { Vector as VectorSource } from 'ol/source';
-import { Style, Circle, Fill } from 'ol/style';
+import { Vector as VectorSource, XYZ } from 'ol/source';
+import { Style, Circle, Fill, Icon } from 'ol/style';
 
 @Component({
   selector: 'app-live-location',
@@ -112,54 +112,68 @@ import { Style, Circle, Fill } from 'ol/style';
     }
   `]
 })
-export class LiveLocationComponent implements OnInit, AfterViewInit {
+export class LiveLocationComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('mapElement') mapElement!: ElementRef;
 
   temperature: number = 26;
-  lastUpdate: Date = new Date('2024-08-29T12:21:00');
+  lastUpdate: Date = new Date();
   map!: Map;
+  marker!: Feature;
+  currentLocation: [number, number] = [32.8597, 39.9334]; // Başlangıç konumu (Ankara)
+  updateInterval: any;
 
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    // Initialization logic if needed
+    // Başlangıç konumunu istediğiniz konuma ayarlayabilirsiniz
+    // Örnek: this.currentLocation = [35.2433, 38.9637]; // Kayseri
   }
 
   ngAfterViewInit() {
     this.initMap();
+    this.startLocationUpdate();
+  }
+
+  ngOnDestroy() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
   }
 
   initMap() {
-    const initialLocation = fromLonLat([32.8597, 39.9334]); // Ankara, Turkey coordinates
+    const initialLocation = fromLonLat(this.currentLocation);
 
     this.map = new Map({
       target: this.mapElement.nativeElement,
       layers: [
         new TileLayer({
-          source: new OSM()
+          source: new XYZ({
+            url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+            attributions: '© Google Maps'
+          })
         })
       ],
       view: new View({
         center: initialLocation,
-        zoom: 12
+        zoom: 15
       })
     });
 
-    // Add a marker for the current location
-    const marker = new Feature({
+    this.marker = new Feature({
       geometry: new Point(initialLocation)
     });
 
     const vectorSource = new VectorSource({
-      features: [marker]
+      features: [this.marker]
     });
 
     const vectorLayer = new VectorLayer({
       source: vectorSource,
       style: new Style({
-        image: new Circle({
-          radius: 6,
-          fill: new Fill({ color: 'red' })
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: '../../../../../assets/img/icons/truck-icon.png', // Kamyon ikonunuzun yolu
+          scale: 0.2 // İkonun boyutunu ayarlayın
         })
       })
     });
@@ -167,12 +181,21 @@ export class LiveLocationComponent implements OnInit, AfterViewInit {
     this.map.addLayer(vectorLayer);
   }
 
-  updateLocation(longitude: number, latitude: number) {
-    const newLocation = fromLonLat([longitude, latitude]);
-    const vectorLayer = this.map.getLayers().getArray().find(layer => layer instanceof VectorLayer) as VectorLayer<VectorSource>;
-    const feature = vectorLayer.getSource()?.getFeatures()[0];
-    feature?.setGeometry(new Point(newLocation));
+  startLocationUpdate() {
+    this.updateInterval = setInterval(() => {
+      this.updateLocation();
+    }, 100); // Her saniye güncelle
+  }
+
+  updateLocation() {
+    // 5 metre kuzeye hareket et (yaklaşık olarak 0.000045 derece)
+    this.currentLocation[1] += 0.000045;
+
+    const newLocation = fromLonLat(this.currentLocation);
+    this.marker.setGeometry(new Point(newLocation));
     this.map.getView().setCenter(newLocation);
+
+    this.lastUpdate = new Date();
   }
 
   navigateTo(destination: string) {

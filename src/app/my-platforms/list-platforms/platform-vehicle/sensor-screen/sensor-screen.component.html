@@ -1,10 +1,16 @@
 <div class="main-container">
-    <h1 class="panel-title">{{title}}</h1>
-    <div class="options-container">
-        <div class="option-card" (click)="navigateTo('ana-sayfa')">
-            <i class="pi pi-home"></i>
-            <h2>Ana Sayfa</h2>
-            <p>Ana Sayfa'ya Geri Dönün</p>
+    <h1 class="panel-title">CANLI KONUM</h1>
+    <div class="location-container">
+        <div #mapElement class="map-container"></div>
+        <div class="temperature-container">
+            <p class="temperature">Sıcaklık: {{ temperature }}°C</p>
+            <p class="last-update">Son Güncelleme: {{ lastUpdate | date:'dd.MM.yyyy HH:mm:ss' }}</p>
         </div>
+    </div>
+    <div class="navigation-container">
+        <button class="nav-button" (click)="navigateTo('ana-sayfa')">
+            <i class="pi pi-home"></i>
+            Ana Sayfa
+        </button>
     </div>
 </div>
