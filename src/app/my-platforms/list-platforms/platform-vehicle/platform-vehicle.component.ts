@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { VehicleService } from '../../../services/vehicle.service'; // Assume this service exists
 import { TurkishDatePipe } from '../../../pipes/turkish-date.pipe';
-
+//TODO düzenle butonunu implemente et
 @Component({
   selector: 'app-platform-vehicle',
   standalone: true,
@@ -55,7 +55,14 @@ export class PlatformVehicleComponent implements OnInit {
     );
   }
 
-  navigateTo(route: string) {
-    this.router.navigate([route]);
+  navigateTo(route: string, id?: string) {
+    if (id) {
+      console.log(id);
+      this.router.navigate([route, id]);
+    } else {
+      this.router.navigate([route]);
+    }
   }
+
+
 }

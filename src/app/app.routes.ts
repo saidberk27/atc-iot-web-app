@@ -19,6 +19,7 @@ import { AddNewPlatformComponent } from './my-platforms/add-platform/add-platfor
 import { AddNewBuildingComponent } from './my-buildings/add-new-building/add-new-building.component';
 import { PlatformBuildingComponent } from './my-platforms/list-platforms/platform-building/platform-building.component';
 import { PlatformVehicleComponent } from './my-platforms/list-platforms/platform-vehicle/platform-vehicle.component';
+import { LiveLocationComponent } from './my-platforms/list-platforms/platform-vehicle/sensor-screen/sensor-screen.component';
 
 
 export const routes: Routes = [
@@ -84,6 +85,10 @@ export const routes: Routes = [
     {
         path: 'yeni-bina-ekle',
         component: AddNewBuildingComponent,
+        canActivate: [authGuard]
+    }, {
+        path: 'araci-izle/:vehicleID',
+        component: LiveLocationComponent,
         canActivate: [authGuard]
     },
     {

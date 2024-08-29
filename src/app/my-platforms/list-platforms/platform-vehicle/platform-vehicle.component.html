@@ -10,15 +10,25 @@
 
     <ng-container *ngIf="!loading; else loadingTemplate">
         <ng-container *ngIf="filteredVehicles.length > 0; else noVehicles">
-            <div class="vehicle-list">
-                <p-card *ngFor="let vehicle of filteredVehicles" [header]="vehicle.vehicleName"
-                    [subheader]="vehicle.type">
-                    <ng-template pTemplate="content">
-                        <p><strong>Plaka:</strong> {{ vehicle.plateNumber }}</p>
-                        <p><strong>Açıklama:</strong> {{ vehicle.description }}</p>
-                        <p><strong>Eklenme Tarihi:</strong> {{ vehicle.createdAt | turkishDate }}</p>
-                    </ng-template>
-                </p-card>
+            <div class="vehicle-list-container">
+                <div class="vehicle-list">
+                    <p-card *ngFor="let vehicle of filteredVehicles" [header]="vehicle.vehicleName"
+                        [subheader]="vehicle.type" styleClass="vehicle-card">
+                        <ng-template pTemplate="content">
+                            <p><strong>Plaka:</strong> {{ vehicle.plateNumber }}</p>
+                            <p><strong>Açıklama:</strong> {{ vehicle.description }}</p>
+                            <p><strong>Eklenme Tarihi:</strong> {{ vehicle.createdAt | turkishDate }}</p>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <div class="card-buttons">
+                                <button pButton pRipple type="button" label="Düzenle" icon="pi pi-pencil"
+                                    class="p-button-outlined"></button>
+                                <button pButton pRipple type="button" (click)="navigateTo('araci-izle', vehicle.id)"
+                                    label="Aracı İzle" icon="fas fa-satellite-dish" class="p-button-outlined"></button>
+                            </div>
+                        </ng-template>
+                    </p-card>
+                </div>
             </div>
         </ng-container>
     </ng-container>

@@ -1,5 +1,6 @@
 @import "primeicons/primeicons.css";
 @import "primeflex/primeflex.css";
+@import 'ol/ol.css';
 
 body {
   margin: 0;
