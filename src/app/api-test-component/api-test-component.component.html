@@ -1,1 +1,43 @@
-<p>{{apiText}}</p>
+<div class="main-container">
+    <h1 class="panel-title">CANLI KONUM</h1>
+    <div class="sensor-info">
+        <p>Sensör Verileri: {{ sensorData }}</p>
+        <p>Araç ID: {{ vehicleId }}</p>
+        <p>Sensör ID: {{ sensorId }}</p>
+    </div>
+    <div class="location-container">
+        <div #mapElement class="map-container"></div>
+        <p-card>
+            <div class="temperature-container">
+                <ng-container *ngIf="noDataMessage; else temperatureData">
+                    <p class="no-data">{{ noDataMessage }}</p>
+                </ng-container>
+                <ng-template #temperatureData>
+                    <p class="temperature" *ngIf="temperature !== null">Sıcaklık: {{ temperature | number:'1.2-2' }}°C
+                    </p>
+                    <p class="last-update" *ngIf="lastUpdate">Son Güncelleme: {{ lastUpdate | date:'dd.MM.yyyy HH:mm:ss'
+                        }}</p>
+                </ng-template>
+            </div>
+        </p-card>
+        <p-accordion>
+            <p-accordionTab header="Geçmiş Veriler">
+                <p-dropdown [options]="timeFrames" [(ngModel)]="selectedTimeFrame" optionLabel="name"
+                    (onChange)="onTimeFrameChange()"></p-dropdown>
+                <div class="chart-container">
+                    <div class="zoom-buttons">
+                        <p-button icon="pi pi-plus" (onClick)="zoomIn()"></p-button>
+                        <p-button icon="pi pi-minus" (onClick)="zoomOut()"></p-button>
+                    </div>
+                    <p-chart type="line" [data]="chartData" [options]="chartOptions" [height]="chartHeight"></p-chart>
+                </div>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+    <div class="navigation-container">
+        <button class="nav-button" (click)="navigateTo('ana-sayfa')">
+            <i class="pi pi-home"></i>
+            Ana Sayfa
+        </button>
+    </div>
+</div>

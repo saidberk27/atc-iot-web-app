@@ -13,7 +13,7 @@ import { MyPlatformsComponent } from './my-platforms/my-platforms.component';
 import { MyVehiclesComponent } from './my-vehicles/my-vehicles.component';
 import { MyBuildingsComponent } from './my-buildings/my-buildings.component';
 import { AddNewVehicleComponent } from './my-vehicles/add-new-vehicle/add-new-vehicle.component';
-import { IoTMessagesTableComponent } from './api-test-component/api-test-component.component';
+import { SensorScreenComponent } from './api-test-component/api-test-component.component';
 import { ListPlatformsComponent } from './my-platforms/list-platforms/list-platforms.component';
 import { AddNewPlatformComponent } from './my-platforms/add-platform/add-platform.component';
 import { AddNewBuildingComponent } from './my-buildings/add-new-building/add-new-building.component';
@@ -93,7 +93,7 @@ export const routes: Routes = [
     },
     {
         path: 'api-test',
-        component: IoTMessagesTableComponent
+        component: SensorScreenComponent
     },
     { path: '**', redirectTo: '' }
 ];
