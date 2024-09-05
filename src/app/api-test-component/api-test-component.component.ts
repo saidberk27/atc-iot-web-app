@@ -1,9 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import { fromLonLat } from 'ol/proj';
@@ -49,79 +47,214 @@ export class SensorScreenComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('mapElement') mapElement!: ElementRef;
   @ViewChild('chart') chart: any;
 
-  sensorData: string = '';
-  vehicleId: string = '';
-  sensorId: string = '';
-
-  chartHeight = '600px'; // Canvas yüksekliği
+  readonly sensorData: string = 'Sıcaklık ve GPS';
+  readonly vehicleId: string = '01 BFG 2423';
+  readonly sensorId: string = 'TS2024x1';
+  readonly chartHeight = '600px';
 
   temperature: number | null = null;
   lastUpdate: Date | null = null;
   map!: Map;
   marker!: Feature;
   currentLocation: [number, number] = [32.48039, 37.86536];
-  updateInterval: any;
+  lastValidGPSData: [number, number] | null = null;
   subscription: Subscription | null = null;
+  noDataMessage: string | null = null;
 
-  timeFrames: TimeFrame[] = [
+  readonly timeFrames: TimeFrame[] = [
     { name: 'Son 1 Dakika', value: 'MINUTE' },
     { name: 'Son 1 Saat', value: 'HOUR' },
     { name: 'Son 1 Gün', value: 'DAY' },
     { name: 'Son 1 Hafta', value: 'WEEK' }
   ];
-  selectedTimeFrame: TimeFrame = this.timeFrames[1]; // Default to 'Son 1 Saat'
-  noDataMessage: string | null = null;
+  selectedTimeFrame: TimeFrame = this.timeFrames[1];
 
   chartData: any;
   chartOptions: any;
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  private readonly client = generateClient<Schema>();
+
+  constructor(private router: Router) {
     this.initChart();
   }
 
+  // Lifecycle Methods
   ngOnInit() {
     this.timeFrameCheck();
   }
 
   ngAfterViewInit() {
-    // Delay map initialization to ensure the container is rendered
-
     setTimeout(() => {
       this.initMap();
-      this.startLocationUpdate();
     }, 0);
-
-
   }
 
   ngOnDestroy() {
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-    }
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
   }
+
+  // Data Fetching and Processing Methods
   async timeFrameCheck() {
     for (const timeFrame of this.timeFrames) {
       this.selectedTimeFrame = timeFrame;
-      await this.fetchMessages();
-      if (this.temperature !== null && this.lastUpdate !== null) {
-        break;
-      }
+      if (await this.fetchMessages()) break;
     }
 
-    if (this.temperature === null || this.lastUpdate === null) {
-      this.noDataMessage = "Herhangi bir veri bulunamadı. Lütfen sensörün çalıştığından emin olun.";
-    } else {
-      this.noDataMessage = null;
-      this.startRealTimeUpdates();
+    this.noDataMessage = this.temperature === null || this.lastUpdate === null
+      ? "Herhangi bir veri bulunamadı. Lütfen sensörün çalıştığından emin olun."
+      : null;
+
+    if (!this.noDataMessage) this.startRealTimeUpdates();
+  }
+
+  async fetchMessages(returnMessages: boolean = false): Promise<IoTMessage[] | boolean> {
+    try {
+      const response = await this.client.queries.getIoTMessages({
+        TableName: "IoTMessages2",
+        TimeFrame: this.selectedTimeFrame.value
+      });
+      if (response.data) {
+        const messages = this.cleanData(JSON.parse(response.data));
+
+        if (returnMessages) {
+          return messages;
+        }
+
+        this.updateChartData(messages);
+        if (messages.length > 0) {
+          const latestMessage = messages[0];
+          await this.updateGPSData(latestMessage);
+          this.updateTemperatureAndTimestamp(latestMessage);
+          return true;
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+    return returnMessages ? [] : false;
+  }
+
+  cleanData(data: any[]): IoTMessage[] {
+    return data
+      .map(item => ({
+        payload: item.payload,
+        messageId: item.messageId.trim(),
+        timestamp: item.timestamp
+      }))
+      .sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  startRealTimeUpdates() {
+    this.subscription = interval(5000).subscribe(() => this.fetchMessages());
+  }
+
+  // GPS and Location Methods
+  async updateGPSData(message: IoTMessage) {
+    try {
+      const payloadData = JSON.parse(message.payload);
+      if (payloadData?.gps_data) {
+        const newLocation = this.parseGPSData(payloadData.gps_data);
+        if (newLocation) {
+          this.lastValidGPSData = newLocation;
+          this.updateLocation(newLocation);
+        } else if (this.lastValidGPSData === null) {
+          console.log('Invalid GPS data, searching for last valid data');
+          await this.findLastValidGPSData();
+        } else {
+          console.log('Invalid GPS data, using last known valid location');
+          this.updateLocation(this.lastValidGPSData);
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing GPS data:', error);
     }
   }
 
+  async findLastValidGPSData() {
+    try {
+      const currentTimeFrame = this.selectedTimeFrame;
+      this.selectedTimeFrame = this.timeFrames.find(tf => tf.value === 'DAY') || this.timeFrames[2];
 
+      const messages = await this.fetchMessages(true) as IoTMessage[];
 
+      if (messages.length > 0) {
+        for (const message of messages) {
+          const payloadData = JSON.parse(message.payload);
+          if (payloadData?.gps_data) {
+            const location = this.parseGPSData(payloadData.gps_data);
+            if (location) {
+              console.log('Found valid GPS data');
+              this.lastValidGPSData = location;
+              this.updateLocation(location);
+              break;
+            }
+          }
+        }
+        if (!this.lastValidGPSData) {
+          console.log('No valid GPS data found in recent messages');
+        }
+      }
 
+      this.selectedTimeFrame = currentTimeFrame;
+      await this.fetchMessages();
+    } catch (error) {
+      console.error('Error searching for valid GPS data:', error);
+    }
+  }
+
+  updateLocation(newLocation: [number, number]) {
+    if (newLocation[0] !== 0 && newLocation[1] !== 0) {
+      this.currentLocation = newLocation;
+      const olLocation = fromLonLat(this.currentLocation);
+      this.marker.setGeometry(new Point(olLocation));
+      this.map.getView().setCenter(olLocation);
+      this.lastValidGPSData = newLocation;
+    } else {
+      console.log('Invalid location data, skipping update');
+    }
+  }
+
+  parseGPSData(gpsData: string): [number, number] | null {
+    const match = gpsData.match(/\$GPGLL,(\d+\.\d+),([NS]),(\d+\.\d+),([EW])/);
+    if (match && match[1] && match[2] && match[3] && match[4]) {
+      const lat = this.convertToDecimalDegrees(parseFloat(match[1]), match[2]);
+      const lon = this.convertToDecimalDegrees(parseFloat(match[3]), match[4]);
+      return [lon, lat];
+    }
+    return null;
+  }
+
+  convertToDecimalDegrees(value: number, direction: string): number {
+    const degrees = Math.floor(value / 100);
+    const minutes = value - (degrees * 100);
+    let decimalDegrees = degrees + (minutes / 60);
+    if (direction === 'S' || direction === 'W') {
+      decimalDegrees = -decimalDegrees;
+    }
+    return decimalDegrees;
+  }
+
+  // Temperature Methods
+  updateTemperatureAndTimestamp(message: IoTMessage) {
+    try {
+      const payloadData = JSON.parse(message.payload);
+      if (payloadData?.temperature) {
+        const tempMatch = payloadData.temperature.match(/Temperature\s*=\s*([\d.]+)/);
+        if (tempMatch?.[1]) {
+          this.temperature = parseFloat(tempMatch[1]);
+          this.lastUpdate = new Date(message.timestamp);
+        } else {
+          console.error('Temperature format is not as expected');
+        }
+      } else {
+        console.error('Temperature data is missing or not in the expected format');
+      }
+    } catch (error) {
+      console.error('Error parsing temperature data:', error);
+    }
+  }
+
+  // Map Methods
   initMap() {
     const initialLocation = fromLonLat(this.currentLocation);
 
@@ -145,17 +278,15 @@ export class SensorScreenComponent implements OnInit, AfterViewInit, OnDestroy {
       geometry: new Point(initialLocation)
     });
 
-    const vectorSource = new VectorSource({
-      features: [this.marker]
-    });
-
     const vectorLayer = new VectorLayer({
-      source: vectorSource,
+      source: new VectorSource({
+        features: [this.marker]
+      }),
       style: new Style({
         image: new Icon({
           anchor: [0.5, 1],
-          src: '../../../../../assets/img/icons/truck-icon.png', // Kamyon ikonunuzun yolu
-          scale: 0.2 // İkonun boyutunu ayarlayın
+          src: '../../../../../assets/img/icons/truck-icon.png',
+          scale: 0.2
         })
       })
     });
@@ -163,95 +294,17 @@ export class SensorScreenComponent implements OnInit, AfterViewInit, OnDestroy {
     this.map.addLayer(vectorLayer);
   }
 
-  startLocationUpdate() {
-    //TODO  burayi NVME verisine göre implemente et
-  }
-
-  updateLocation() {
-    // 5 metre kuzeye hareket et (yaklaşık olarak 0.000045 derece)
-    this.currentLocation[1] += 0.000045;
-
-    const newLocation = fromLonLat(this.currentLocation);
-    this.marker.setGeometry(new Point(newLocation));
-    this.map.getView().setCenter(newLocation);
-
-    this.lastUpdate = new Date();
-  }
-
-  startRealTimeUpdates() {
-    this.subscription = interval(5000).subscribe(() => {
-      this.fetchMessages();
-    });
-  }
-
-  async fetchMessages() {
-    const client = generateClient<Schema>();
-    try {
-      const response = await client.queries.getIoTMessages({
-        TableName: "IoTMessages2",
-        TimeFrame: this.selectedTimeFrame.value
-      });
-      if (response.data) {
-        const messages = this.cleanData(JSON.parse(response.data));
-        this.updateChartData(messages);
-        if (messages.length > 0) {
-          const latestMessage = messages[0];
-          this.updateTemperatureAndTimestamp(latestMessage);
-          return true;
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-    return false;
-  }
-
-  updateTemperatureAndTimestamp(message: IoTMessage) {
-    try {
-      const payloadData = JSON.parse(message.payload);
-      if (payloadData && typeof payloadData.temperature === 'string') {
-        const tempMatch = payloadData.temperature.match(/Temperature\s*=\s*([\d.]+)/);
-        if (tempMatch && tempMatch[1]) {
-          this.temperature = parseFloat(tempMatch[1]);
-          this.lastUpdate = new Date(message.timestamp);
-        } else {
-          console.error('Temperature format is not as expected');
-        }
-      } else {
-        console.error('Temperature data is missing or not in the expected format');
-      }
-    } catch (error) {
-      console.error('Error parsing temperature data:', error);
-    }
-  }
-
-  cleanData(data: any[]): IoTMessage[] {
-    return data.map(item => ({
-      payload: item.payload,
-      messageId: item.messageId.trim(),
-      timestamp: item.timestamp
-    })).sort((a, b) => b.timestamp - a.timestamp);
-  }
-
-
-
-  onTimeFrameChange() {
-    this.fetchMessages();
-  }
-
-
+  // Chart Methods
   initChart() {
     this.chartData = {
       labels: [],
-      datasets: [
-        {
-          label: 'Sıcaklık',
-          data: [],
-          fill: false,
-          borderColor: '#42A5F5',
-          tension: 0.4
-        }
-      ]
+      datasets: [{
+        label: 'Sıcaklık',
+        data: [],
+        fill: false,
+        borderColor: '#42A5F5',
+        tension: 0.4
+      }]
     };
 
     this.chartOptions = {
@@ -260,101 +313,70 @@ export class SensorScreenComponent implements OnInit, AfterViewInit, OnDestroy {
       scales: {
         x: {
           type: 'time',
-          time: {
-            unit: 'minute'
-          },
-          adapters: {
-            date: {
-              locale: tr
-            }
-          },
-          ticks: {
-            color: '#495057'
-          },
-          grid: {
-            color: 'rgba(255,255,255,0.2)'
-          }
+          time: { unit: 'minute' },
+          adapters: { date: { locale: tr } },
+          ticks: { color: '#495057' },
+          grid: { color: 'rgba(255,255,255,0.2)' }
         },
         y: {
           beginAtZero: true,
-
-          suggestedMin: 0,  // Y ekseninin minimum değeri
-          suggestedMax: 50, // Y ekseninin maksimum değeri (sıcaklık aralığınıza göre ayarlayın)
-          ticks: {
-            stepSize: 5,    // Y eksenindeki adım büyüklüğü
-            color: '#495057'
-          },
-          title: {
-            display: true,
-            text: 'Sıcaklık (°C)',
-            color: '#495057'
-          },
-
-          grid: {
-            color: 'rgba(255,255,255,0.2)'
-          }
+          suggestedMin: 20,
+          suggestedMax: 40,
+          ticks: { stepSize: 0.1, color: '#495057' },
+          title: { display: true, text: 'Sıcaklık (°C)', color: '#495057' },
+          grid: { color: 'rgba(255,255,255,0.2)' }
         }
       },
       plugins: {
-        legend: {
-          labels: {
-            color: '#495057'
-          }
-        },
+        legend: { labels: { color: '#495057' } },
         title: {
           display: true,
           text: 'Zaman İçinde Sıcaklık Değişimi',
-          font: {
-            size: 16
-          },
+          font: { size: 16 },
           color: '#495057'
         },
         zoom: {
           zoom: {
-            wheel: {
-              enabled: true,
-            },
-            pinch: {
-              enabled: true
-            },
+            wheel: { enabled: true },
+            pinch: { enabled: true },
             mode: 'xy',
           },
-          pan: {
-            enabled: true,
-            mode: 'xy',
-          }
+          pan: { enabled: true, mode: 'xy' }
         }
-      }
+      },
+      animation: false
     };
   }
 
+  updateChartData(messages: IoTMessage[]) {
+    this.chartData = {
+      ...this.chartData,
+      labels: messages.map(m => new Date(m.timestamp)),
+      datasets: [{
+        ...this.chartData.datasets[0],
+        data: messages.map(m => {
+          const tempMatch = m.payload.match(/Temperature\s*=\s*([\d.]+)/);
+          return tempMatch ? parseFloat(tempMatch[1]) : null;
+        })
+      }]
+    };
+  }
 
   zoomIn() {
-    if (this.chart && this.chart.chart) {
-      this.chart.chart.zoom(4.1);
-    }
+    this.chart?.chart?.zoom(1.1);
   }
 
   zoomOut() {
-    if (this.chart && this.chart.chart) {
-      this.chart.chart.zoom(0.9);
-    }
+    this.chart?.chart?.zoom(0.9);
   }
 
-
-  updateChartData(messages: IoTMessage[]) {
-    this.chartData.labels = messages.map(m => new Date(m.timestamp));
-    this.chartData.datasets[0].data = messages.map(m => {
-      const tempMatch = m.payload.match(/Temperature\s*=\s*([\d.]+)/);
-      return tempMatch ? parseFloat(tempMatch[1]) : null;
-    });
-
-    // Force chart update
-    this.chartData = { ...this.chartData };
-  }
-
-
+  // Navigation Methods
   navigateTo(destination: string) {
     this.router.navigate([`/${destination}`]);
+  }
+
+  // Event Handlers
+  onTimeFrameChange() {
+    this.fetchMessages();
   }
 }
